@@ -1,0 +1,119 @@
+body {
+    margin-top: 60px;
+    background: #c2dfff;
+    color: #1A5276;
+}
+
+h1 {
+    margin-left: 5%;
+}
+
+p {
+    color: #616161;
+    position: fixed;
+    right: 14%; 
+    top: 35%; 
+    width: 40%;
+    text-align: right;
+}
+
+table {
+    margin-top: 40px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+
+label {
+    width: 100px;
+    font-weight: bold;
+    margin-left: 5px;
+    display: inline-block;
+}
+
+input {
+    height: 20px;
+    width: 100%;
+    display: inline-flex;
+}
+
+div {
+    margin-left: 60px;
+}
+
+form {
+    width: 475px;
+}
+
+th {
+    text-align: left;
+    color: #2874A6;
+    padding: 15px;
+    font-weight: bold;
+}
+
+td {
+    width: fit-content;
+    display: block;
+}
+
+input[type="radio"] {
+    margin-right: 5px; 
+    transform: scale(0.8);
+}
+
+input[type="checkbox"] {
+    transform: scale(0.8); 
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+textarea {
+    width: 100%; 
+    padding: 10px; 
+    border: 2px solid #1A5276; 
+    border-radius: 5px; 
+    background-color: #F0F8FF; 
+    color: #1A5276;
+    font-size: 14px; 
+    resize: vertical;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+
+button {
+    background-color: #1A5276; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 50px 50px 10px 10px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+input[type="submit"] {
+    background-color: #1A5276; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 50px 50px 10px 10px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); 
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100px;
+    height: auto;
+    margin-bottom: 50px;
+}
+
+input[type="submit"]:hover {
+    background-color: #2874A6;
+    transform: translateY(-3px); 
+}
+input[type="submit"]:active {
+    background-color: #0E4058;
+    transform: translateY(0); 
+}
