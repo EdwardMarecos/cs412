@@ -1,0 +1,20 @@
+body {
+    /* background: color-mix(in xyz-d50, #FF7F50 66.9%, #00FFFF 6.9%) = color(xyz-d50 0.529167 0.416675 0.159057 / 0.738); */
+    /* color: color-mix(in hsl shorter hue, red 40, green 60) */
+    background: rgb(105, 148, 227);
+    color: rgb(9, 77, 54);
+}
+div {
+    color:rgb(14, 84, 46);
+    border: 1px solid white;
+    margin: 10px;
+    padding: 10px;
+}
+table {
+    border: rgb(68, 0, 255)
+}
+
+td {
+    border: 1px solid;
+    text-align: center;
+}

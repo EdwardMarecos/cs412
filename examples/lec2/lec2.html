@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 2</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div>
+        <h1>lec 2 notes</h1>
+        <p>
+            hi
+        </p>
+    </div>
+    <div>
+        <h2>input fields</h2>
+        <hr>
+        <form>
+            <label for="fname">First Name</label><br>
+            <input type="text" id="fname" name="fname"><br>
+            <label for="lname">Last Name</label><br>
+            <input type="text" id="lname" name="lname">
+        </form>
+        <h2>mutually exclusive buttons (radio buttons)</h2>
+        <hr>
+        <form>
+            <input type="radio" id="html" name="fav_language" value="html">
+            <label for="html">HTML</label><br>
+            <input type="radio" id="css" name="fav_language" value="css">
+            <label for="css">CSS</label><br>
+            <input type="radio" id="javascript" name="fav_language" value="javascript">
+            <label for="javascript">javascript</label>
+        </form>
+    </div>
+    <div>
+        <h2>checkbox</h2>
+        <hr>
+        <form>
+            <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+            <label for="vehicle1"> I have a bike</label><br>
+            <input type="checkbox" id="vehicle2" name="vehicle2" value="Car">
+            <label for="vehicle2"> I have a car</label><br>
+            <input type="checkbox" id="vehicle3" name="vehicle3" value="Boat">
+            <label for="vehicle3"> I have a boat</label>
+          </form>
+    </div>
+    <div>
+        <h2>form with submit button</h2>
+        <hr>
+        <form action="http://www.google.com/search" target="blank">
+            <label for="fname">First name:</label><br>
+            <input type="text" id="fname" name="fname" value="John"><br>
+            <label for="lname">Last name:</label><br>
+            <input type="text" id="lname" name="lname" value="Doe"><br><br>
+            <input type="submit" value="Submit">
+          </form>
+    </div>
+    <div>
+        <h2>same?</h2>
+        <hr>
+        <form action="https://cs-people.bu.edu/nechang/" target="blank">
+            <label for="fname">First name:</label><br>
+            <input type="text" id="fname" value="John"><br><br>
+            <input type="submit" value="Submit">
+          </form>
+    </div>
+    <div>
+        <h1>a custom form</h1>
+        <hr>
+        <!-- the post hides the data parameters stuff from url vry nice 
+         post message has a different location for this stuff whereas get doesnt
+         have another step for it-->
+        <form method="post" action="https://cs-webapps.bu.edu/cgi-bin/util/formmailer.py" target="blank">
+            Your name: <input type="text" name="your_name"><br>
+            Email address: <input type="text" name="mailto"><br>
+            <input type="submit">
+        </form>
+    </div>
+    <div>
+        <h2>text area</h2>
+        <hr>
+        How are u? <br>
+        <textarea name="" id="" rows="5" cols="40"></textarea>
+    </div>
+    <div>
+        <h2>dropdown list</h2>
+        <hr>
+        <select name="state">
+            <option value="ma">ma</option>
+            <option value="nh">nh</option>
+            <option value="etc">another state</option>
+        </select>
+
+        <input type="hidden" name="mailto" value="emarecos@bu.edu"><br>
+        <input type="submit">
+    </div>
+</body>
+</html>
