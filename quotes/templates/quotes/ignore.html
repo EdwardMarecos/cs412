@@ -1,0 +1,66 @@
+<!-- this one is gonna need 2 loops
+
+Note: this HTML template will need to 
+use a loop to process the list of quotes, 
+and another loop to process the list of 
+images.
+-->
+
+{% extends 'base.html' %}
+
+{% block title %}All Quotes and Images{% endblock %}
+
+{% block content %}
+    <h1>All Quotes and Images</h1>
+
+    <div>
+        <h2>Quotes:</h2>
+        <ul>
+            {% for quote in quotes %}
+                <li>{{ quote }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div>
+        <h2>Images:</h2>
+        <div style="display: flex; flex-wrap: wrap;">
+            {% for image in images %}
+                <div style="margin: 10px;">
+                    <img src="{{ image }}" alt="Image {{ forloop.counter }}" style="width: 200px; height: auto;">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+<!-- templates/quotes/about.html
+{% extends 'base.html' %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+    <h1>About</h1>
+    
+    <section>
+        <h2>About the Person</h2>
+
+        <img src="https://cdn.britannica.com/36/69636-050-81A93193/Self-Portrait-artist-panel-board-Vincent-van-Gogh-1887.jpg" alt="Vincent Van Gogh" class="center-image"">
+
+        <p>
+            This application showcases quotes by Vincent Van Gogh. 
+            Vincent Van Gogh was was a Dutch painter who became one of the most influential artists in history. Despite facing numerous personal struggles and only finding success after his death, Van Gogh's passion and dedication to his craft never wavered. He created over 2,000 artworks, including masterpieces like "Starry Night" and "Sunflowers," known for their bold colors and emotional depth. His life reminds us that perseverance and staying true to our vision can create a lasting impact, even when faced with adversity.
+        </p>
+    </section>
+
+    <section>
+        <h2>About the Creator</h2>
+
+        <img src="https://cs-people.bu.edu/emarecos/me.jpg" class="modern-image">
+
+        <p>
+            This web application was created by Edward Marecos. 
+            It is designed to provide inspiration and insight through the words of Vincent Van Gogh.
+        </p>
+    </section>
+{% endblock %} -->
