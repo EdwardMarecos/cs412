@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles', #increase list as u make new projects
     'hw',
     'quotes',
+    'restaurant',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,32 @@
+<!-- templates/restaurant/confirmation.html -->
+
+<!-- 
+a confirmation page to display after the 
+order is placed. The confirmation page 
+will display which items were ordered, 
+the customer information, and the expected 
+time at which the order will be ready 
+(a time to be determined randomly, but 
+within 30-60 minutes of the current 
+date/time).
+-->
+
+<html>
+
+{% extends 'restaurant/main.html' %}
+
+{% block content %}
+<!-- specific page details -->
+
+<div>
+    <h2>blah confirmation</h2>
+    <h3>Confirmation</h3>
+    <p> text </p>
+    <p>
+        ur name is {{name}}.
+    </p>
+</div>
+
+{% endblock %}
+
+</html>

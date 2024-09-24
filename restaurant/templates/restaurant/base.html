@@ -1,0 +1,33 @@
+<!-- templates/restaurant/base.html -->
+
+<!-- 
+the page with basic information about the 
+restaurant. the main page should include 
+the name, location, hours of operation 
+(displayed as a list or table), and one or 
+more photos appropriate to such a page.
+-->
+
+{% load static %}
+
+<html>
+<head>
+    <title>{% block title %}Restaurant App{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles_quotes.css' %}">
+</head>
+<body>
+    <h1>Peachtree Corner Cafe</h1>
+    <nav>
+        <ul>
+            <li><a href="{% url 'main' %}">Main</a></li>
+            <li><a href="{% url 'order' %}">Order</a></li>
+            <li><a href="{% url 'confirmation' %}">Confirmation</a></li>
+
+        </ul>
+    </nav>
+
+    {% block content %}
+    <!-- Content here -->
+    {% endblock %}
+</body>
+</html>
