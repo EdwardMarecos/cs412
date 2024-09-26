@@ -86,7 +86,7 @@ def confirmation(request):
         # Get the form data
         name = request.POST.get('name')
         email = request.POST.get('email')
-        phone = request.POST.get('phont')
+        phone = request.POST.get('phone')
         requests = request.POST.get('requests', '')  # Get special requests, default to empty string if not filled
 
         # Get the ordered items (from daily special and regular menu)
