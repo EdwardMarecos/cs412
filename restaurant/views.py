@@ -4,12 +4,42 @@
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse#, redirect
 import time, random
+import datetime
+mydate = datetime.datetime.now()
 
-# Create your views here.
+logo = ["https://thumbs.dreamstime.com/b/cute-red-cat-drinking-peach-coffee-tea-front-coffee-shop-cartoon-illustration-generative-ai-illustration-cute-cat-271960767.jpg"]
 
-items = ["hi",
-         "bye",
-         "sigh"]
+daily_specials = {
+    "Peach Mochi": 5.00,
+    "Peach Cheese Mousse Cake": 6.50,
+    "Peach Slush": 4.50,
+    "Peach Cobbler": 5.75
+}
+
+regular_menu = {
+    "Peach Latte": 4.00,
+    "Peach Tea": 3.00,
+    "Peach Crepe": 7.00,
+    "Peach Boba": 5.50
+}
+
+peach_boba_addons = {
+    'Tapioca Pearls': 0.50,
+    'Popping Boba': 0.75,
+    'Lychee Jelly': 0.60,
+    'Aloe Vera': 0.70,
+    'Extra Peach Syrup': 0.40,
+    'Coconut Milk': 0.80,
+    'Oat Milk': 0.90,
+    'More Ice': 0.00,
+    'Less Ice': 0.00,
+    'No Ice': 0.00,
+    'Extra Sweet': 0.20,
+    'Half Sweet': 0.00,
+}
+
+
+ran_time = mydate.strftime("%b") + time.strftime(" %d %Y at %I:%M %p", time.localtime(time.time()+random.randrange(60, 6000)))
 
 def base(request):
     """
@@ -23,7 +53,11 @@ def main(request):
     the page with basic information about the restaurant
     """
     template_name = 'restaurant/main.html'
-    return render(request, template_name)
+
+    main_context = {
+        "peachtree_cafe" : logo[0]
+    }
+    return render(request, template_name, main_context)
 
 def order(request):
     """
@@ -31,10 +65,12 @@ def order(request):
     """
     # use this template
     template_name = 'restaurant/order.html'
-    
+    random_special = random.choice(list(daily_specials.items()))
     # create a dict of context variables for the template
     restaurant_context = {
-        "daily_special" : items[random.randint(0, len(items)-1)], # random quote
+        "daily_special" : random_special,
+        "regular_menu" : regular_menu,
+        "peach_boba_addons": peach_boba_addons,
     }
 
     # delegate rendering work to the template
@@ -42,35 +78,57 @@ def order(request):
 
 def confirmation(request):
     """
-    a confirmation page to display after the order is placed
-    handle form submission
+    A confirmation page to display after the order is placed.
     """
-    # use this template
     template_name = 'restaurant/confirmation.html'
-    
-    # create a dict of context variables for the template
-    # show_all_context = {
-    #     "conf_time" : time.ctime(), # a random time 30 - 60 min after current time/date
-    #     #edit this
-    # }
-    print(request)
 
-    # check that we have a post request
-    if request.POST:
-        #read the form data into python variables
-        name = request.POST['name']
+    if request.method == "POST":
+        # Get the form data
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        requests = request.POST.get('requests', '')  # Get special requests, default to empty string if not filled
 
+        # Get the ordered items (from daily special and regular menu)
+        ordered_items = request.POST.getlist('item')
+
+        # Get the add-ons for Peach Boba (if any were selected)
+        addons = request.POST.getlist('addon')
+
+        # Calculate the total price
+        total_price = 0.0
+        ordered_list = []
+
+        # Add prices for daily specials and regular menu items
+        for item in ordered_items:
+            if item in daily_specials:
+                ordered_list.append(f"{item} - ${daily_specials[item]:.2f}")
+                total_price += daily_specials[item]
+            elif item in regular_menu:
+                ordered_list.append(f"{item} - ${regular_menu[item]:.2f}")
+                total_price += regular_menu[item]
+
+        # Add prices for any add-ons
+        addon_list = []
+        for addon in addons:
+            if addon in peach_boba_addons:
+                addon_list.append(f"{addon} - ${peach_boba_addons[addon]:.2f}")
+                total_price += peach_boba_addons[addon]
+
+        # Pass all necessary data to the context
         context = {
-            'name': name,
+            "conf_time": ran_time,  # Random pickup time
+            "name": name,
+            "email": email,
+            "ordered_items": ordered_list,
+            "addons": addon_list,
+            "total_price": total_price,
+            "requests": requests,  # Pass special requests to the context
         }
 
-        # delegate rendering work to the template
+        # Render the confirmation page with the order details
         return render(request, template_name, context=context)
-    
-    ## handle get request on this url
-    return HttpResponse("Nope")
 
-    # template_name = "formdata/form.html"
-    # return render(request, template_name)
+    return HttpResponse("Invalid request")
+
 
     # return redirect("order")

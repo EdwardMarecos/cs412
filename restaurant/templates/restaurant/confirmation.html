@@ -1,32 +1,41 @@
-<!-- templates/restaurant/confirmation.html -->
-
-<!-- 
-a confirmation page to display after the 
-order is placed. The confirmation page 
-will display which items were ordered, 
-the customer information, and the expected 
-time at which the order will be ready 
-(a time to be determined randomly, but 
-within 30-60 minutes of the current 
-date/time).
--->
-
-<html>
-
-{% extends 'restaurant/main.html' %}
+{% extends 'restaurant/base.html' %}
 
 {% block content %}
 <!-- specific page details -->
 
-<div>
-    <h2>blah confirmation</h2>
-    <h3>Confirmation</h3>
-    <p> text </p>
-    <p>
-        ur name is {{name}}.
-    </p>
+<div class="container">
+    <h2>Order Confirmation</h2>
+    <h3>Thank you for your order, {{ name }}!</h3>
+    <p>Your order will be ready for pickup at {{ conf_time }}.</p>
+
+    <!-- Display the ordered items -->
+    <h4>Items Ordered:</h4>
+    <ul>
+        {% for item in ordered_items %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Display the add-ons if any were selected -->
+    {% if addons %}
+    <h4>Add-ons:</h4>
+    <ul>
+        {% for addon in addons %}
+            <li>{{ addon }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <!-- Display special requests if provided -->
+    {% if requests %}
+    <h4>Special Requests:</h4>
+    <p>{{ requests }}</p>
+    {% endif %}
+
+    <!-- Display the total price -->
+    <h4>Total Price: ${{ total_price|floatformat:2 }}</h4>
+
+    <p>If you have any questions about your order, please contact us using your provided email: {{ email }}.</p>
 </div>
 
 {% endblock %}
-
-</html>

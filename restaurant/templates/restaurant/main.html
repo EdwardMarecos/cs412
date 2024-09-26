@@ -8,15 +8,20 @@ the name, location, hours of operation
 more photos appropriate to such a page.
 -->
 
-{% extends 'restaurant/main.html' %}
+{% extends 'restaurant/base.html' %}
 
 {% block content %}
-<!-- specific page details -->
-
-<div>
-    <h2>blah order</h2>
-    <h3>main</h3>
+<div class="container">
+    <h2>Welcome to Peachtree Corner Cafe!</h2>
     
+    <h3>Hours of Operation:</h3>
+    <ul>
+        <li>Monday - Friday: 8 AM - 10 PM</li>
+        <li>Saturday: 9 AM - 11 PM</li>
+        <li>Sunday: 10 AM - 9 PM</li>
+    </ul>
+    
+    <img src="{{ peachtree_cafe }}" alt="Peachtree Cafe" style="width: 300px; height: auto; margin-bottom: 20px;">
 </div>
-
 {% endblock %}
+
