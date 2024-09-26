@@ -1,8 +1,8 @@
 ## restaurant/views.py
 ## description: write view functions to handle URL requests for the restaurant app
 
-from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse#, redirect
+from django.shortcuts import render, redirect
+from django.http import HttpRequest, HttpResponse
 import time, random
 import datetime
 mydate = datetime.datetime.now()
@@ -86,6 +86,7 @@ def confirmation(request):
         # Get the form data
         name = request.POST.get('name')
         email = request.POST.get('email')
+        phone = request.POST.get('phont')
         requests = request.POST.get('requests', '')  # Get special requests, default to empty string if not filled
 
         # Get the ordered items (from daily special and regular menu)
@@ -123,12 +124,12 @@ def confirmation(request):
             "addons": addon_list,
             "total_price": total_price,
             "requests": requests,  # Pass special requests to the context
+            "phone": phone,
         }
 
         # Render the confirmation page with the order details
         return render(request, template_name, context=context)
 
-    return HttpResponse("Invalid request")
+    # return HttpResponse("Invalid request")
 
-
-    # return redirect("order")
+    return redirect("order")
