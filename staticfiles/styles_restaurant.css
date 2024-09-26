@@ -118,6 +118,19 @@ form input[type="text"], form input[type="email"] {
     color: #4F4F4F;
 }
 
+/* Inputs */
+form input[type="text"], form input[type="phone"] {
+    width: 90%;
+    max-width: 500px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #FFB7B2;
+    border-radius: 5px;
+    background-color: #FFF5EC;
+    color: #4F4F4F;
+}
+
+
 /* Submit Button */
 input[type="submit"] {
     background-color: #FF7171;
