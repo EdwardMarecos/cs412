@@ -1,0 +1,39 @@
+<!-- templates/mini_fb/show_all_profiles.html -->
+
+<!-- 
+extends the base.html template and implements 
+the content block. Use this page to display a 
+table with all Profile records, one per line. 
+Include the first name, last name, city, and a 
+profile image, using the data attributes stored 
+in the Profile model.
+-->
+
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Profiles</h2>
+    
+    <table>
+        {% for a in profiles %}
+        <tr>
+            <td>
+                <img src="{{ a.profile_img_url }}" alt="Profile Img" style="width: 300px; height: auto; margin-bottom: 20px;">
+            </td>
+            <td>
+                {{ a.first_name }} {{ a.last_name }}
+            </td>
+            <td>
+                {{ a.city }}
+            </td>
+            <td>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+</div>
+{% endblock %}
+
