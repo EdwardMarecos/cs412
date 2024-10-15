@@ -1,4 +1,4 @@
-/* General Styles styles_mini_fb.css */
+/* General Styles */
 html, body {
     margin: 0;
     padding: 0;
@@ -42,10 +42,6 @@ nav ul {
     gap: 15px;
 }
 
-nav ul li {
-    display: inline;
-}
-
 nav ul li a {
     text-decoration: none;
     padding: 10px 20px;
@@ -59,11 +55,11 @@ nav ul li a:hover {
     background-color: #1E88E5; /* Darker blue on hover */
 }
 
-/* Container */
+/* Container Styling */
 .container {
     width: 90%;
     max-width: 1000px;
-    background-color: #FFFFFF; /* White background for content area */
+    background-color: #FFFFFF; /* White background */
     padding: 30px;
     margin: 20px auto;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -81,18 +77,18 @@ table {
 
 table th, table td {
     padding: 15px;
-    border-bottom: 1px solid #D0D7DF; /* Soft border for rows */
+    border-bottom: 1px solid #D0D7DF;
 }
 
 table tr:hover {
-    background-color: #F1F6FC; /* Light blue hover effect */
+    background-color: #F1F6FC;
 }
 
 table td img {
     width: 100%;
     max-width: 150px;
-    border-radius: 10px; /* Rounded rectangle for images */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for images */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Heading */

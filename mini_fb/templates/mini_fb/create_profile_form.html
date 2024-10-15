@@ -1,0 +1,86 @@
+<!-- templates/mini_fb/create_profile_form.html -->
+
+<!-- 
+This template extends the base.html template and implements 
+the content block. It renders a form that collects inputs for 
+creating a new Profile object.
+
+The form fields correspond to the attributes defined in the Profile model:
+- First Name: User's first name.
+- Last Name: User's last name.
+- City: The city the user resides in.
+- Email Address: User's email address.
+- Profile Image URL: A URL to the user's profile image.
+- Birth Date: User's birth date.
+
+The form uses Django’s CSRF token for security and submits the data via 
+the POST method. Upon successful submission, the CreateView will create 
+and store a new Profile instance in the database.
+-->
+
+
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: auto; padding: 20px; background-color: #f9f9f9; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <h2 style="text-align: center">Create a Profile</h2>
+    
+    <form method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        {{ form.non_field_errors }}
+        
+        {% for field in form %}
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <label for="{{ field.id_for_label }}" style="
+                font-weight: bold; 
+                font-family: 'Comic Sans MS', cursive; 
+                color: #4A90E2; 
+                margin-bottom: 5px;">
+                {{ field.label }}
+            </label>
+            {{ field }}
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+        
+        <button type="submit" style="
+        background-color: #42A5F5;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+        font-family: 'Arial', sans-serif;
+        outline: none;
+        " 
+        onmouseover="this.style.backgroundColor='#1E88E5';"
+        onmouseout="this.style.backgroundColor='#42A5F5';">
+        Create Profile!
+        </button>
+    </form>
+</div>
+
+<!-- Add inline JavaScript to style form fields -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const formFields = document.querySelectorAll("input, select");
+
+        formFields.forEach(field => {
+            field.style.padding = "12px";
+            field.style.marginTop = "8px";
+            field.style.marginBottom = "16px";
+            field.style.border = "2px solid #1976D2";
+            field.style.borderRadius = "8px";
+            field.style.backgroundColor = "#F0F8FF";  // Light blue background
+            field.style.color = "#3C4858";
+            field.style.fontSize = "16px";
+            field.style.boxShadow = "2px 2px 5px rgba(0, 0, 0, 0.1)";
+            field.style.transition = "border-color 0.3s ease, box-shadow 0.3s ease";
+        });
+    });
+</script>
+
+{% endblock %}

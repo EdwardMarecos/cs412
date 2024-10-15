@@ -17,18 +17,24 @@ in the Profile model.
     
     <table>
         {% for a in profiles %}
-        <tr>
-            <td>
-                <a href="{% url 'show_profile' a.pk %}">
-                    <img src="{{ a.profile_img_url }}" alt="Profile Img" style="width: 150px; height: auto; margin-bottom: 10px;">
+        <tr style="background-color: #F9F9F9; border-radius: 10px; padding: 15px;">
+            <td style="padding: 15px;">
+                <a href="{% url 'show_profile' a.pk %}" style="text-decoration: none;">
+                    <img src="{{ a.profile_img_url }}" alt="Profile Img" style="width: 150px; height: auto; margin-bottom: 10px; border-radius: 10px;">
                 </a>
             </td>
-            <td>
-                <a href="{% url 'show_profile' a.pk %}">
+            <td style="padding: 15px;">
+                <a href="{% url 'show_profile' a.pk %}" style="
+                    text-decoration: none; 
+                    color: #4A90E2; 
+                    font-size: 1.2em;
+                    font-family: Arial, sans-serif;
+                    font-weight: bold;
+                    transition: color 0.3s ease;">
                     {{ a.first_name }} {{ a.last_name }}
                 </a>
             </td>
-            <td>{{ a.city }}</td>
+            <td style="padding: 15px; color: #3C4858;">{{ a.city }}</td>
         </tr>
         {% endfor %}
     </table>

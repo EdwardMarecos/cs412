@@ -1,6 +1,7 @@
 # mini_fb/models.py
 
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 
@@ -20,6 +21,10 @@ class Profile(models.Model):
     def get_status_messages(self):
         """Return all status messages for this profile, ordered by timestamp."""
         return StatusMessage.objects.filter(profile=self).order_by('-timestamp')
+    
+    def get_absolute_url(self):
+        """return the url to view this profile object"""
+        return reverse('show_profile', kwargs={'pk': self.pk})
 
 class StatusMessage(models.Model):
     ''' model the data attributes of Facebook status message. 

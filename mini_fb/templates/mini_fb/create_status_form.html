@@ -1,0 +1,49 @@
+<!-- templates/mini_fb/create_status_form.html -->
+
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+<div class="container" style="
+    max-width: 600px; 
+    margin: auto; 
+    padding: 20px; 
+    background-color: #f9f9f9; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    
+    <h2 style="text-align: center;">Post a status message for {{ profile.first_name }} {{ profile.last_name }}</h2>
+    
+    <form method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        {{ form.non_field_errors }}
+        
+        {% for field in form %}
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <label for="{{ field.id_for_label }}" style="
+                font-weight: bold; 
+                color: #4A90E2; 
+                margin-bottom: 5px;">
+                {{ field.label }}
+            </label>
+            {{ field }}
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+        
+        <button type="submit" style="
+            background-color: #42A5F5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-family: 'Arial', sans-serif;
+            outline: none;">
+            Create Status
+        </button>
+    </form>
+</div>
+{% endblock %}
