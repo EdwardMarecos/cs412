@@ -19,21 +19,19 @@ in the Profile model.
         {% for a in profiles %}
         <tr>
             <td>
-                <img src="{{ a.profile_img_url }}" alt="Profile Img" style="width: 300px; height: auto; margin-bottom: 20px;">
+                <a href="{% url 'show_profile' a.pk %}">
+                    <img src="{{ a.profile_img_url }}" alt="Profile Img" style="width: 150px; height: auto; margin-bottom: 10px;">
+                </a>
             </td>
             <td>
-                {{ a.first_name }} {{ a.last_name }}
+                <a href="{% url 'show_profile' a.pk %}">
+                    {{ a.first_name }} {{ a.last_name }}
+                </a>
             </td>
-            <td>
-                {{ a.city }}
-            </td>
-            <td>
-
-            </td>
+            <td>{{ a.city }}</td>
         </tr>
         {% endfor %}
     </table>
-    
 </div>
 {% endblock %}
 

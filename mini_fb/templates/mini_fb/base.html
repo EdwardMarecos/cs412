@@ -2,7 +2,7 @@
 ## Create Template:
 ## File: mini_fb/templates/mini_fb/base.html -->
 
-<!-- templates/show_all.html -->
+<!-- templates/base.html -->
 
 {% load static %}
 
@@ -16,8 +16,8 @@
             <h1 class="header-title">Mini FB</h1>
             <nav>
                 <ul>
-                    <li><a href="#">Main</a></li>
-                    <li><a href="#">Friends</a></li> <!-- Placeholder button -->
+                    <li><a href="{% url 'base' %}">Profiles</a></li>
+                    <li><a href="#">Create Profile</a></li> <!-- Placeholder button -->
                     <li><a href="#">Messages</a></li> <!-- Placeholder button -->
                     <li><a href="#">Settings</a></li> <!-- Placeholder button -->
                 </ul>
