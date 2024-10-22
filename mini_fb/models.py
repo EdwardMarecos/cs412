@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.urls import reverse
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -12,7 +13,7 @@ class Profile(models.Model):
     last_name = models.TextField(blank=False)
     city = models.TextField(blank=False)
     email_address = models.EmailField(blank=False)
-    profile_img_url = models.TextField(blank=False)
+    profile_img_url = models.URLField(blank=False)
 
     def __str__(self):
         """return a string representation of this profile object."""
@@ -41,3 +42,20 @@ class StatusMessage(models.Model):
     def __str__(self):
         """return a string representation of the status message object"""
         return f'{self.message} at {self.timestamp} for {self.profile}'
+      
+    def get_images(self):
+        """return all images for this status message"""
+        return self.image_set.all()
+    
+class Image(models.Model):
+    ''' encapsulates the idea of an image file (not a URL) that is stored 
+    in the Django media directory 
+    image field, a foreign key to connect to status messages (to include zero
+    to as many imagesm in a status message), timestamp'''
+    image = models.ImageField(upload_to='')
+    message = models.ForeignKey(StatusMessage, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(default=now)
+
+    def __str__(self):
+        """return a string representation of the status message object"""
+        return f'{self.image} at {self.timestamp} for {self.message}'
