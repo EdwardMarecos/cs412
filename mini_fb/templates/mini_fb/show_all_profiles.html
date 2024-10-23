@@ -20,8 +20,7 @@ in the Profile model.
         <tr style="background-color: #F9F9F9; border-radius: 10px; padding: 15px;">
             <td style="padding: 15px;">
                 <a href="{% url 'show_profile' a.pk %}" style="text-decoration: none;">
-                    <img src="{{ a.profile_img_url }}" alt="Profile Img" style="width: 150px; height: auto; margin-bottom: 10px; border-radius: 10px;">
-                </a>
+                    <img src="{{ a.get_profile_image }}" alt="Profile Img" style="width: 150px; height: auto; margin-bottom: 10px; border-radius: 10px;">                </a>
             </td>
             <td style="padding: 15px;">
                 <a href="{% url 'show_profile' a.pk %}" style="

@@ -12,4 +12,4 @@ urlpatterns = [
     path ('profile/<int:pk>', ShowProfilePage.as_view(), name="show_profile"),
     path ('create_profile', CreateProfileView.as_view(), name="create_profile"),
     path ('profile/<int:pk>/create_status/', CreateStatusMessageView.as_view(), name='create_status'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

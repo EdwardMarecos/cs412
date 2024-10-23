@@ -1,5 +1,6 @@
 # mini_fb/models.py
 
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
@@ -13,7 +14,10 @@ class Profile(models.Model):
     last_name = models.TextField(blank=False)
     city = models.TextField(blank=False)
     email_address = models.EmailField(blank=False)
-    profile_img_url = models.URLField(blank=False)
+
+    # i wanted a choice between url or image cause the discord urls expired :3
+    profile_img_url = models.URLField(blank=True, null=True)    # oprional URL
+    profile_img_file = models.ImageField(upload_to='profile_images/', blank=True, null=True)
 
     def __str__(self):
         """return a string representation of this profile object."""
@@ -26,6 +30,15 @@ class Profile(models.Model):
     def get_absolute_url(self):
         """return the url to view this profile object"""
         return reverse('show_profile', kwargs={'pk': self.pk})
+    
+    def get_profile_image(self):
+        """Return the uploaded image if it exists, otherwise return the URL."""
+        if self.profile_img_file and hasattr(self.profile_img_file, 'url'):
+            return self.profile_img_file.url  # Use the uploaded image
+        elif self.profile_img_url is not None:
+            return self.profile_img_url  # Use the URL if no file is uploaded
+        else:
+            return '/media/profile_images/default_pfp.jpg'  # No image provided
 
 class StatusMessage(models.Model):
     ''' model the data attributes of Facebook status message. 
