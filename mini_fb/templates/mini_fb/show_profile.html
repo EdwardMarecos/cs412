@@ -66,24 +66,73 @@ pleasing.
     <h3 style="color: #1976D2;">Status Messages</h3>
 
     {% for message in profile.get_status_messages %}
-        <div style="margin-bottom: 15px; padding: 10px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-between; align-items: center;">
-            <!-- Status Message Text -->
-            <div style="flex: 1;">
-                <p><strong>{{ message.timestamp|date:"F d, Y h:i A" }}:</strong> {{ message.message }}</p>
-            </div>
+    <div style="
+        margin-bottom: 15px; 
+        padding: 10px; 
+        background-color: #f9f9f9; 
+        border-radius: 10px; 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;">
+        
+        <!-- Status Message Text -->
+        <div style="flex: 1;">
+            <p>
+                {{ message.message }} <br>
+            </p>
+            <!-- date/time and Action Buttons (Edit/Delete) -->
+            <div style="
+                display: flex;
+                gap: 10px; 
+                margin-top: auto; 
+                bottom: 0; 
+                position: relative;">
+                
+                <strong>{{ message.timestamp|date:"F d, Y h:i A" }}:</strong> 
+                
+                <!-- Edit Button -->
+                <a href="{% url 'update_status' profile.pk message.pk %}" style="
+                    background-color: #42A5F5; 
+                    color: white; 
+                    padding: 5px 10px; 
+                    border-radius: 5px; 
+                    text-decoration: none; 
+                    font-size: 14px;">
+                    Edit
+                </a>
 
-            <!-- Images Section -->
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-left: 20px;">
-                {% for img in message.get_images %}
-                    <div style="max-width: 200px;">
-                        <img src="{{ img.image.url }}" alt="Status Image" style="width: 100%; height: auto; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                        <p style="text-align: center; font-size: 0.9em;"><small>{{ img.timestamp|date:"F d, Y H:i" }}</small></p>
-                    </div>
-                {% endfor %}
+                <!-- Delete Button -->
+                <a href="{% url 'remove_status' profile.pk message.pk %}" style="
+                    background-color: #D32F2F; 
+                    color: white; 
+                    padding: 5px 10px; 
+                    border-radius: 5px; 
+                    text-decoration: none; 
+                    font-size: 14px;">
+                    Delete
+                </a>
+                
             </div>
         </div>
+
+        <!-- Images Section -->
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-left: 20px;">
+            {% for img in message.get_images %}
+            <div style="max-width: 200px;">
+                <img src="{{ img.image.url }}" alt="Status Image" 
+                     style="width: 100%; height: auto; border-radius: 10px; 
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                <p style="text-align: center; font-size: 0.9em;">
+                    <small>{{ img.timestamp|date:"F d, Y H:i" }}</small>
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
     {% empty %}
-        <p>No status messages yet. Be the first to post one!</p>
+    <p>No status messages yet. Be the first to post one!</p>
     {% endfor %}
 </div>
+
 {% endblock %}

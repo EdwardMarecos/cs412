@@ -1,0 +1,57 @@
+<!-- templates/mini_fb/delete_status_form.html -->
+
+<!-- 
+This template extends the base.html template and implements 
+the content block. 
+
+This file will have 2 small forms:
+
+One to confirm the delete. It will send a POST back to the same URL at which you 
+are trying to do the delete.
+
+One to cancel the delete. It will send a GET to URL to redisplay the profile page.
+
+Hint: you will need to set the action attribute of the form to the URL to show 
+the profile page. You will need to create a URL that returns to the profile page
+-->
+
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+<div class="container" style="
+    max-width: 600px;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;">
+
+    <h2 style="color: #D32F2F;">Delete Status Message</h2>
+    <p>Are you sure you want to delete this status message?</p>
+
+    <p><strong>"{{ status_message.message }}"</strong></p>
+    <p><em>{{ status_message.timestamp|date:"F d, Y h:i A" }}</em></p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" style="
+            background-color: #D32F2F;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;">
+            Confirm Delete
+        </button>
+    </form>
+
+    <a href="{% url 'show_profile' profile_pk %}" style="
+        margin-top: 10px;
+        display: inline-block;
+        text-decoration: none;
+        color: #1976D2;">
+        Cancel
+    </a>
+</div>
+{% endblock %}

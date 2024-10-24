@@ -89,3 +89,46 @@ class UpdateProfileView(UpdateView):
     def get_success_url(self):
         ''' Redirect to the profile page after a successful update. '''
         return reverse('show_profile', kwargs={'pk': self.object.pk})
+    
+class UpdateStatusMessageView(UpdateView):
+    model = StatusMessage
+    form_class = CreateStatusMessageForm
+    template_name = 'mini_fb/update_status_message_form.html'
+
+    def get_success_url(self):
+        """Redirect to the profile page of the related profile after update."""
+        # Get the profile associated with the status message being updated
+        profile_pk = self.object.profile.pk
+        # Redirect to the correct profile page
+        return reverse('show_profile', kwargs={'pk': profile_pk})
+
+
+class DeleteStatusMessageView(DeleteView):
+    model = StatusMessage
+    template_name = 'mini_fb/delete_status_form.html'
+    context_object_name = 'status_message'
+
+    def get_object(self):
+        """
+        Override get_object to ensure we retrieve the correct status message
+        that matches both the profile and the status message ID.
+        """
+        profile_pk = self.kwargs['profile_pk']
+        status_pk = self.kwargs['pk']
+        return get_object_or_404(StatusMessage, pk=status_pk, profile_id=profile_pk)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the related profile's pk to the context
+        context['profile_pk'] = self.get_object().profile.pk
+        return context
+
+    def get_success_url(self):
+        '''
+        return the URL to which the user should be redirected after a successful 
+        delete operation. Specifically, when a StatusMessage is deleted, the user 
+        should be redirected to the profile page for whom the status message was deleted.
+        '''
+        # Use the profile's pk for the redirect, not the status message's pk
+        profile_pk = self.get_object().profile.pk
+        return reverse('show_profile', kwargs={'pk': profile_pk})
