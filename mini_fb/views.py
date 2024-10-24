@@ -2,7 +2,7 @@
 # define the views for the mini_fb app
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Profile, StatusMessage
+from .models import Profile, StatusMessage, Image
 from .forms import CreateProfileForm, CreateStatusMessageForm # import the form
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse
@@ -29,6 +29,21 @@ class CreateProfileView(CreateView):
     form_class = CreateProfileForm  # Use the CreateProfileForm to generate the form
     template_name = 'mini_fb/create_profile_form.html'  # Template for the form
 
+    def form_valid(self, form):
+        # Check if both fields are empty before saving
+        profile = form.save(commit=False)  # Don't save to the database just yet 
+        # (i was having a bug that it was saving before applying changes if certain fields werent filled [fields i wanted optional])
+
+        if not profile.profile_img_file and not profile.profile_img_url:
+            profile.profile_img_url = '/media/profile_images/default_pfp.jpg'  # Set default URL for default pfp
+
+        profile.save()  # Now save to the database
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Redirect to the new profile's detail view after creation."""
+        return reverse('show_profile', kwargs={'pk': self.object.pk})
+
 class CreateStatusMessageView(CreateView):
     '''A view to create a status message for a Profile.'''
     model = StatusMessage
@@ -49,6 +64,17 @@ class CreateStatusMessageView(CreateView):
         form.instance.profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
         # Set the current timestamp for the status message
         form.instance.timestamp = timezone.now()
+        # Save the StatusMessage object and get a reference to it
+        sm = form.save()
+
+        # Get the list of uploaded files
+        files = self.request.FILES.getlist('files')  
+        for f in files:
+            # Create an Image object for each file
+            image = Image(image=f, message=sm)  
+            # Save the Image object to the database
+            image.save()  
+
         return super().form_valid(form)
 
     def get_success_url(self):

@@ -13,11 +13,13 @@
     
     <h2 style="text-align: center;">Post a status message for {{ profile.first_name }} {{ profile.last_name }}</h2>
     
-    <form method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+    <!-- form :3 -->
+    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
         {% csrf_token %}
         
         {{ form.non_field_errors }}
         
+        <!-- Render the form fields -->
         {% for field in form %}
         <div style="display: flex; flex-direction: column; gap: 5px;">
             <label for="{{ field.id_for_label }}" style="
@@ -30,7 +32,22 @@
             {{ field.errors }}
         </div>
         {% endfor %}
-        
+
+        <!-- File input field -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label for="files" style="
+                font-weight: bold; 
+                color: #4A90E2;">
+                Upload Image(s):
+            </label>
+            <div class="custom-file-input">
+                <button type="button" id="upload-btn">Choose Files</button>
+                <span id="file-chosen">No file chosen</span>
+                <input type="file" name="files" id="real-file" multiple hidden />
+            </div>
+            <div id="image-preview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+        </div>
+
         <button type="submit" style="
             background-color: #42A5F5;
             color: white;
@@ -41,9 +58,78 @@
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.1s ease;
             font-family: 'Arial', sans-serif;
-            outline: none;">
+            outline: none;"
+            onmouseover="this.style.backgroundColor='#1E88E5';"
+            onmouseout="this.style.backgroundColor='#42A5F5';">
             Create Status
         </button>
     </form>
 </div>
+
+<script>
+    // JavaScript for button cause the default is UGLYYYYYYYYY
+    const realFileBtn = document.getElementById('real-file');
+    const uploadBtn = document.getElementById('upload-btn');
+    const fileChosen = document.getElementById('file-chosen');
+    const preview = document.getElementById('image-preview');
+
+    // When the custom button is clicked, trigger the hidden file input
+    uploadBtn.addEventListener('click', () => {
+        realFileBtn.click();
+    });
+
+    // Display the selected file names
+    realFileBtn.addEventListener('change', event => {
+        const files = Array.from(event.target.files);
+        fileChosen.textContent = files.length > 0 ? `${files.length} file(s) selected` : 'No file chosen';
+        
+        // Clear previous previews
+        preview.innerHTML = '';
+
+        // Display image previews
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = '80px';
+                img.style.height = '80px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '5px';
+                img.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
+
+<style>
+    .custom-file-input {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    #upload-btn {
+        background-color: #42A5F5;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-family: 'Arial', sans-serif;
+    }
+
+    #upload-btn:hover {
+        background-color: #1E88E5;
+    }
+
+    #file-chosen {
+        font-size: 14px;
+        color: #666;
+    }
+</style>
 {% endblock %}

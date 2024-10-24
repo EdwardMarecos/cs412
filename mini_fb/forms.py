@@ -56,10 +56,20 @@ class CreateProfileForm(forms.ModelForm):
     )
 
     profile_img_url = forms.URLField(
-        label="Profile Image URL", 
+        label="Profile Image URL (Optional)", 
+        required=False,
+        help_text="Provide a URL to an image if you prefer.",
         widget=forms.URLInput(attrs={
             'placeholder': 'Enter profile image URL',
             'class': 'form-control'
+        })
+    )
+
+    profile_img_file = forms.ImageField(
+        label="Or Upload a Profile Picture (Optional)",
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            'class': 'form-control-file'
         })
     )
 

@@ -22,65 +22,145 @@ and store a new Profile instance in the database.
 {% extends 'mini_fb/base.html' %}
 
 {% block content %}
-<div class="container" style="max-width: 600px; margin: auto; padding: 20px; background-color: #f9f9f9; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-    <h2 style="text-align: center">Create a Profile</h2>
+<div class="container" style="
+    max-width: 600px; 
+    margin: auto; 
+    padding: 30px; 
+    background-color: #f9f9f9; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
     
-    <form method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+    <h2 style="text-align: center; margin-bottom: 20px; color: #1976D2;">
+        Create a Profile
+    </h2>
+
+    <form method="POST" enctype="multipart/form-data" 
+          style="display: flex; flex-direction: column; gap: 20px;">
         {% csrf_token %}
         
         {{ form.non_field_errors }}
-        
+
+        <!-- Loop through all fields except the file input cause i wanted a pretty upload button-->
         {% for field in form %}
-        <div style="display: flex; flex-direction: column; gap: 5px;">
+        {% if field.name != 'profile_img_file' %}
+        <div style="display: flex; flex-direction: column; gap: 8px;">
             <label for="{{ field.id_for_label }}" style="
                 font-weight: bold; 
-                font-family: 'Comic Sans MS', cursive; 
-                color: #4A90E2; 
-                margin-bottom: 5px;">
+                color: #1976D2;">
                 {{ field.label }}
             </label>
             {{ field }}
             {{ field.errors }}
         </div>
+        {% endif %}
         {% endfor %}
-        
+
+        <!-- Custom File Input Button -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label for="profile_img_file" style="
+                font-weight: bold; 
+                color: #1976D2;">
+                Or Upload Your Own Profile Picture:
+            </label>
+            <div class="custom-file-input">
+                <button type="button" id="upload-btn">Choose File</button>
+                <span id="file-chosen">No file chosen</span>
+                <input type="file" name="profile_img_file" id="real-file" hidden />
+            </div>
+            <div id="image-preview" style="margin-top: 10px;"></div>
+        </div>
+
         <button type="submit" style="
-        background-color: #42A5F5;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: 18px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.1s ease;
-        font-family: 'Arial', sans-serif;
-        outline: none;
-        " 
-        onmouseover="this.style.backgroundColor='#1E88E5';"
-        onmouseout="this.style.backgroundColor='#42A5F5';">
-        Create Profile!
+            background-color: #42A5F5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-family: 'Arial', sans-serif;"
+            onmouseover="this.style.backgroundColor='#1E88E5';"
+            onmouseout="this.style.backgroundColor='#42A5F5';">
+            Create Profile!
         </button>
     </form>
 </div>
 
-<!-- Add inline JavaScript to style form fields -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const formFields = document.querySelectorAll("input, select");
+    // JavaScript to handle custom file input behavior
+    const realFileBtn = document.getElementById('real-file');
+    const uploadBtn = document.getElementById('upload-btn');
+    const fileChosen = document.getElementById('file-chosen');
+    const preview = document.getElementById('image-preview');
 
-        formFields.forEach(field => {
-            field.style.padding = "12px";
-            field.style.marginTop = "8px";
-            field.style.marginBottom = "16px";
-            field.style.border = "2px solid #1976D2";
-            field.style.borderRadius = "8px";
-            field.style.backgroundColor = "#F0F8FF";  // Light blue background
-            field.style.color = "#3C4858";
-            field.style.fontSize = "16px";
-            field.style.boxShadow = "2px 2px 5px rgba(0, 0, 0, 0.1)";
-            field.style.transition = "border-color 0.3s ease, box-shadow 0.3s ease";
-        });
+    uploadBtn.addEventListener('click', () => realFileBtn.click());
+
+    realFileBtn.addEventListener('change', event => {
+        const file = event.target.files[0];
+        fileChosen.textContent = file ? file.name : 'No file chosen';
+        preview.innerHTML = '';  // Clear previous preview
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '50%';
+                img.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
     });
 </script>
 
+<style>
+    /* Consistent Styling for Form Fields */
+    input, textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #42A5F5;
+        border-radius: 5px;
+        font-size: 16px;
+        font-family: 'Arial', sans-serif;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        border-color: #42A5F5;
+        outline: none;
+    }
+
+    .custom-file-input {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    #upload-btn {
+        background-color: #42A5F5;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #upload-btn:hover {
+        background-color: #1E88E5;
+    }
+
+    #file-chosen {
+        font-size: 14px;
+        color: #666;
+    }
+</style>
 {% endblock %}
