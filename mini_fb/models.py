@@ -14,9 +14,10 @@ class Profile(models.Model):
     last_name = models.TextField(blank=False)
     city = models.TextField(blank=False)
     email_address = models.EmailField(blank=False)
+    birth_date = models.DateField(null=True, blank=False)
 
     # i wanted a choice between url or image cause the discord urls expired :3
-    profile_img_url = models.URLField(blank=True, null=True)    # oprional URL
+    profile_img_url = models.URLField(blank=True, null=True)    # optional URL
     profile_img_file = models.ImageField(upload_to='profile_images/', blank=True, null=True)
 
     def __str__(self):

@@ -3,8 +3,8 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Profile, StatusMessage, Image
-from .forms import CreateProfileForm, CreateStatusMessageForm # import the form
-from django.views.generic import ListView, DetailView, CreateView
+from .forms import CreateProfileForm, CreateStatusMessageForm, UpdateProfileForm # import the form
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
 from django.utils import timezone
 
@@ -80,3 +80,12 @@ class CreateStatusMessageView(CreateView):
     def get_success_url(self):
         # Redirect to the profile page of the Profile after a successful status message creation
         return reverse('show_profile', kwargs={'pk': self.kwargs['pk']})
+    
+class UpdateProfileView(UpdateView):
+    model = Profile
+    form_class = UpdateProfileForm
+    template_name = 'mini_fb/update_profile_form.html'
+
+    def get_success_url(self):
+        ''' Redirect to the profile page after a successful update. '''
+        return reverse('show_profile', kwargs={'pk': self.object.pk})

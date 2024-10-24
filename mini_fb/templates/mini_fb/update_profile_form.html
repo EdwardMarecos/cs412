@@ -1,21 +1,10 @@
-<!-- templates/mini_fb/create_profile_form.html -->
+<!-- templates/mini_fb/update_profile_form.html -->
 
 <!-- 
-This template extends the base.html template and implements 
-the content block. It renders a form that collects inputs for 
-creating a new Profile object.
-
-The form fields correspond to the attributes defined in the Profile model:
-- First Name: User's first name.
-- Last Name: User's last name.
-- City: The city the user resides in.
-- Email Address: User's email address.
-- Profile Image URL: A URL to the user's profile image.
-- Birth Date: User's birth date.
-
-The form uses Django’s CSRF token for security and submits the data via 
-the POST method. Upon successful submission, the CreateView will create 
-and store a new Profile instance in the database.
+ labels for each field to show what input is expected. 
+ Upon submission, your form will be handled by the generic 
+ UpdateView class, which will update the Profile record for 
+ this model and store the update in the database.
 -->
 
 
@@ -30,16 +19,22 @@ and store a new Profile instance in the database.
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
     
     <h2 style="text-align: center; margin-bottom: 20px; color: #1976D2;">
-        Create a Profile
+        Update Profile for {{form.instance.first_name}} {{form.instance.last_name}}
     </h2>
 
-    <form method="POST" enctype="multipart/form-data" 
-          style="display: flex; flex-direction: column; gap: 20px;">
+    <!-- Display current profile picture at the top center -->
+    <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <img src="{{ form.instance.get_profile_image }}" alt="Current Profile Image" 
+             style="width: 150px; height: 150px; border-radius: 15%; object-fit: cover; 
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         
         {{ form.non_field_errors }}
 
-        <!-- Loop through all fields except the file input cause i wanted a pretty upload button-->
+        <!-- Loop through the fields except the file input -->
         {% for field in form %}
         {% if field.name != 'profile_img_file' %}
         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -73,19 +68,29 @@ and store a new Profile instance in the database.
             <label for="profile_img_file" style="
                 font-weight: bold; 
                 color: #1976D2;">
-                Or Upload Your Own Profile Picture:
+                Change Profile Picture:
             </label>
-            <div class="custom-file-input">
-                <button type="button" id="upload-btn">Choose File</button>
-                <span id="file-chosen">No file chosen</span>
-                <input type="file" name="profile_img_file" id="real-file" hidden />
+            
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <!-- File Input and Button -->
+                <div class="custom-file-input">
+                    <button type="button" id="upload-btn">Choose File</button>
+                    <span id="file-chosen">No file chosen</span>
+                    <input type="file" name="profile_img_file" id="real-file" hidden />
+                </div>
+
+                <!-- Image Preview to the right -->
+                <div id="image-preview" style="width: 100px; height: 100px;">
+                    <!-- Image will be dynamically inserted here -->
+                </div>
             </div>
-            <div id="image-preview" style="margin-top: 10px;"></div>
         </div>
 
-        <button type="submit" style="
-            background-color: #42A5F5;
-            color: white;
+
+        <div>
+            <button type="submit" style="
+            background-color: #FFC107;
+            color: black;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -93,10 +98,11 @@ and store a new Profile instance in the database.
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.1s ease;
             font-family: 'Arial', sans-serif;"
-            onmouseover="this.style.backgroundColor='#1E88E5';"
-            onmouseout="this.style.backgroundColor='#42A5F5';">
-            Create Profile!
-        </button>
+            onmouseover="this.style.backgroundColor='#FFB300';"
+            onmouseout="this.style.backgroundColor='#FFC107';">
+            Save Changes
+            </button>
+        </div>
     </form>
 </div>
 

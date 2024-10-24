@@ -3,6 +3,7 @@
 
 from django import forms
 from .models import Profile, StatusMessage
+import datetime
 
 class CreateProfileForm(forms.ModelForm):
     ''' 
@@ -12,7 +13,8 @@ class CreateProfileForm(forms.ModelForm):
         - Last Name
         - City
         - Email Address
-        - Profile Image URL
+        - Birth Date
+        - Profile Image URL / file
 
     submission means a new Profile instance will be created using 
     the provided data and stored in the database.
@@ -55,6 +57,13 @@ class CreateProfileForm(forms.ModelForm):
         })
     )
 
+    birth_date = forms.DateField(
+        label="Birth Date",
+        widget=forms.SelectDateWidget(
+            attrs={'class': 'form-select'}
+        )
+    )
+
     profile_img_url = forms.URLField(
         label="Profile Image URL (Optional)", 
         required=False,
@@ -73,17 +82,15 @@ class CreateProfileForm(forms.ModelForm):
         })
     )
 
-    birth_date = forms.DateField(
-        label="Birth Date",
-        widget=forms.SelectDateWidget(
-            years=range(1900, 2025),
-            attrs={'class': 'form-select'}
-        )
-    )
-
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name', 'city', 'email_address', 'profile_img_url', 'birth_date']
+        fields = ['first_name', 'last_name', 'city', 'email_address', 'birth_date', 'profile_img_url', 'profile_img_file']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Set the initial year to 2025 to avoid scrolling
+        today = datetime.date.today()
+        self.fields['birth_date'].widget.years = range(today.year+1, 1899, -1)
 
 class CreateStatusMessageForm(forms.ModelForm):
     ''' 
@@ -92,3 +99,62 @@ class CreateStatusMessageForm(forms.ModelForm):
     class Meta:
         model = StatusMessage
         fields = ['message']  
+
+class UpdateProfileForm(forms.ModelForm):
+    '''
+    a form for updating a profile
+    '''
+    
+    city = forms.CharField(
+        label="City", 
+        max_length=100, 
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter your city',
+            'class': 'form-control'
+        })
+    )
+
+    email_address = forms.EmailField(
+        label="Email Address", 
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'Enter your email',
+            'class': 'form-control'
+        })
+    )
+
+    birth_date = forms.DateField(
+        label="Birth Date",
+        widget=forms.SelectDateWidget(
+            attrs={'class': 'form-select'}
+        )
+    )
+
+    profile_img_url = forms.URLField(
+        label="Profile Image URL (Optional)", 
+        required=False,
+        help_text="Provide a URL to an image if you prefer.",
+        widget=forms.URLInput(attrs={
+            'placeholder': 'Enter profile image URL',
+            'class': 'form-control'
+        })
+    )
+
+    profile_img_file = forms.ImageField(
+        label="Or Upload a Profile Picture (Optional)",
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            'class': 'form-control-file'
+        })
+    )
+
+    class Meta:
+        model = Profile
+        fields = ['city', 'email_address', 'birth_date', 'profile_img_url', 'profile_img_file']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Set the initial year to 2025 to avoid scrolling
+        today = datetime.date.today()
+        self.fields['birth_date'].widget.years = range(today.year+1, 1899, -1)
+        # i had to specify here because it wouldnt let me use the today in the date above, and
+        # def not backwards. i tried the -1 and it was odd, didnt work
