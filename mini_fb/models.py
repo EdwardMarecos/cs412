@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -40,6 +41,29 @@ class Profile(models.Model):
             return self.profile_img_url  # Use the URL if no file is uploaded
         else:
             return '/media/profile_images/default_pfp.jpg'  # No image provided
+        
+    def get_friends(self):
+        '''Return a list of the profile's friends.'''
+        friends1 = Friend.objects.filter(profile1=self).values_list('profile2', flat=True)
+        friends2 = Friend.objects.filter(profile2=self).values_list('profile1', flat=True)
+        friend_ids = list(friends1) + list(friends2)
+        return Profile.objects.filter(id__in=friend_ids)
+    
+    def add_friend(self, other):
+        """Add a Friend relation between self and other, if not already present."""
+        # Prevent self-friending
+        if self == other:
+            raise ValidationError("A user cannot be friends with themselves.")
+
+        # Check for an existing friendship in either direction
+        friendship_exists = Friend.objects.filter(
+            (models.Q(profile1=self) & models.Q(profile2=other)) |
+            (models.Q(profile1=other) & models.Q(profile2=self))
+        ).exists()
+
+        if not friendship_exists:
+            # If no existing friendship, create one
+            Friend.objects.create(profile1=self, profile2=other)
 
 class StatusMessage(models.Model):
     ''' model the data attributes of Facebook status message. 
@@ -73,3 +97,17 @@ class Image(models.Model):
     def __str__(self):
         """return a string representation of the status message object"""
         return f'{self.image} at {self.timestamp} for {self.message}'
+
+class Friend(models.Model):
+    '''Encapsulate a friendship between two profiles '''
+    profile1 = models.ForeignKey(
+        'Profile', on_delete=models.CASCADE, related_name='profile1'
+    )
+    profile2 = models.ForeignKey(
+        'Profile', on_delete=models.CASCADE, related_name='profile2'
+    )
+    timestamp = models.DateTimeField(default=now)
+
+    def __str__(self):
+        '''Return a string representation of the friendship.'''
+        return f'{self.profile1} & {self.profile2}'

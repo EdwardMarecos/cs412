@@ -145,3 +145,6 @@ class DeleteStatusMessageView(DeleteView):
         # Use the profile's pk for the redirect, not the status message's pk
         profile_pk = self.get_object().profile.pk
         return reverse('show_profile', kwargs={'pk': profile_pk})
+
+# class 
+
