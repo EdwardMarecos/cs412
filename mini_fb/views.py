@@ -86,6 +86,20 @@ class UpdateProfileView(UpdateView):
     form_class = UpdateProfileForm
     template_name = 'mini_fb/update_profile_form.html'
 
+    def form_valid(self, form):
+        profile = form.save(commit=False)
+
+        # If the 'clear_profile_image' checkbox is checked, reset to default
+        # there is a bug in which u reset, and then try to put a file and it asks for a url after. 
+        # i cannot figure it out atm so it works if u just remove the default url (very easy for users)
+        # also if u put a profile and check the box it returns default, i need some xor functionality for these lol
+        if form.cleaned_data.get('clear_profile_image'):
+            profile.profile_img_url = '/media/profile_images/default_pfp.jpg'  # Set default URL for default pfp
+            profile.profile_img_file = None
+
+        profile.save()
+        return super().form_valid(form)
+
     def get_success_url(self):
         ''' Redirect to the profile page after a successful update. '''
         return reverse('show_profile', kwargs={'pk': self.object.pk})
@@ -101,7 +115,6 @@ class UpdateStatusMessageView(UpdateView):
         profile_pk = self.object.profile.pk
         # Redirect to the correct profile page
         return reverse('show_profile', kwargs={'pk': profile_pk})
-
 
 class DeleteStatusMessageView(DeleteView):
     model = StatusMessage

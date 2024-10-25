@@ -36,7 +36,7 @@
 
         <!-- Loop through the fields except the file input -->
         {% for field in form %}
-        {% if field.name != 'profile_img_file' %}
+        {% if field.name != 'profile_img_file' and field.name != 'clear_profile_image' %}
         <div style="display: flex; flex-direction: column; gap: 8px;">
             <label for="{{ field.id_for_label }}" style="
                 font-weight: bold; 
@@ -86,6 +86,14 @@
             </div>
         </div>
 
+        <!-- Checkbox to reset profile picture -->
+        <div style="margin-top: 0px; margin-bottom: 35px; display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="clear_profile_image" name="clear_profile_image" 
+                style="width: 20px; height: 20px; cursor: pointer;">
+            <label for="clear_profile_image" style="font-weight: bold; color: #1976D2; cursor: pointer;">
+                or remove your profile picture
+            </label>
+        </div>
 
         <div>
             <button type="submit" style="

@@ -130,7 +130,7 @@ class UpdateProfileForm(forms.ModelForm):
     )
 
     profile_img_url = forms.URLField(
-        label="Profile Image URL (Optional)", 
+        label="Update Profile Image URL", 
         required=False,
         help_text="Provide a URL to an image if you prefer.",
         widget=forms.URLInput(attrs={
@@ -140,12 +140,17 @@ class UpdateProfileForm(forms.ModelForm):
     )
 
     profile_img_file = forms.ImageField(
-        label="Or Upload a Profile Picture (Optional)",
+        label="Or Upload a Profile Picture",
         required=False,
         widget=forms.ClearableFileInput(attrs={
             'class': 'form-control-file'
         })
     )
+
+    clear_profile_image = forms.BooleanField(
+        required=False,
+        label='Reset to default profile picture'
+    )  
 
     class Meta:
         model = Profile
