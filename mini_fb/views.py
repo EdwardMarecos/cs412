@@ -146,5 +146,21 @@ class DeleteStatusMessageView(DeleteView):
         profile_pk = self.get_object().profile.pk
         return reverse('show_profile', kwargs={'pk': profile_pk})
 
-# class 
+class CreateFriendView(CreateView):
+    ''' Implement/override the dispatch method, in 
+    which we can read the URL parameters (from self.kwargs), 
+    use the object manager to find the requisite Profile objects, 
+    and then call the Profile‘s add_friend method (from step 2, 
+    above). Finally, we can redirect the user back to the profile 
+    page. '''
+    def dispatch(self, request, *args, **kwargs):
+        # Retrieve both profiles
+        profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
+        other_profile = get_object_or_404(Profile, pk=self.kwargs['other_pk'])
 
+        # Ensure they aren't the same profile (no self-friending)
+        if profile != other_profile:
+            profile.add_friend(other_profile)  # Add the friend
+
+        # Redirect back to the original profile's page
+        return redirect('show_profile', pk=profile.pk)

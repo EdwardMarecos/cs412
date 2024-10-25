@@ -42,15 +42,35 @@ class Profile(models.Model):
         else:
             return '/media/profile_images/default_pfp.jpg'  # No image provided
         
+    def get_friend_suggestions(self):
+        '''Return a list of Profiles that are not friends with this Profile'''
+        # Get all the profiles excluding self
+        all_profiles = Profile.objects.exclude(pk=self.pk)
+
+        # Get the IDs of current friends
+        friend_ids = set(
+            friend.pk for friend in self.get_friends()
+        )
+
+        # Filter out profiles that are already friends
+        suggestions = all_profiles.exclude(pk__in=friend_ids)
+
+        return list(suggestions)
+
     def get_friends(self):
-        '''Return a list of the profile's friends.'''
-        friends1 = Friend.objects.filter(profile1=self).values_list('profile2', flat=True)
-        friends2 = Friend.objects.filter(profile2=self).values_list('profile1', flat=True)
-        friend_ids = list(friends1) + list(friends2)
-        return Profile.objects.filter(id__in=friend_ids)
+        '''Return all friends of this profile'''
+        friends_as_profile1 = Friend.objects.filter(profile1=self).values_list('profile2', flat=True)
+        friends_as_profile2 = Friend.objects.filter(profile2=self).values_list('profile1', flat=True)
+
+        # Combine both sets of friends
+        friend_ids = list(friends_as_profile1) + list(friends_as_profile2)
+
+        # the actual Profile objects
+        friends = Profile.objects.filter(pk__in=friend_ids)
+        return list(friends)    # make sure we return a list
     
     def add_friend(self, other):
-        """Add a Friend relation between self and other, if not already present."""
+        '''Add a Friend relation between self and other, if not already present'''
         # Prevent self-friending
         if self == other:
             raise ValidationError("A user cannot be friends with themselves.")
