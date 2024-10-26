@@ -2,7 +2,7 @@
 # define the views for the mini_fb app
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Profile, StatusMessage, Image
+from .models import Profile, StatusMessage, Image, Friend
 from .forms import CreateProfileForm, CreateStatusMessageForm, UpdateProfileForm # import the form
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
@@ -164,3 +164,24 @@ class CreateFriendView(CreateView):
 
         # Redirect back to the original profile's page
         return redirect('show_profile', pk=profile.pk)
+
+class ShowFriendSuggestionsView(DetailView):
+    ''' display the friend suggestions for a single profile
+    along with links to add friends'''
+    model = Profile  # Retrieve the Profile object
+    template_name = 'mini_fb/friend_suggestions.html'  # Template to render
+    context_object_name = 'befriend'  # Maintain consistency in naming
+
+    def get_context_data(self, **kwargs):
+        """
+        Add friend suggestions to the context.
+        """
+        context = super().get_context_data(**kwargs)
+        context['profile_pk'] = self.kwargs['pk']  # Pass the profile's primary key for the cancel link
+        return context
+
+    
+    
+
+
+

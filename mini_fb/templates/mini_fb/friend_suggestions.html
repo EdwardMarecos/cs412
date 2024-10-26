@@ -1,0 +1,39 @@
+<!-- 
+display the friend suggestions for a single Profile, 
+along with links to add friends
+-->
+
+<!-- templates/mini_fb/friend_suggestions.html -->
+
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+<div class="container" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center;">
+
+    <div class="container" style="margin-top: 30px;">
+        <h3 style="color: #1976D2;">Friend Suggestions</h3>
+        {% for suggestion in befriend.get_friend_suggestions %}
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <img src="{{ suggestion.get_profile_image }}" alt="Profile Image" 
+                     style="width: 50px; height: 50px; border-radius: 15%; object-fit: cover;">
+                <a href="{% url 'show_profile' suggestion.pk %}" style="text-decoration: none; color: #4A90E2;">
+                    {{ suggestion.first_name }} {{ suggestion.last_name }}
+                </a>
+            </div>
+        {% empty %}
+            <p>No friend suggestions available.</p>
+        {% endfor %}
+    </div>
+    
+    <a href="{% url 'show_profile' profile_pk %}" style="
+        margin-top: 10px;
+        display: inline-block;
+        text-decoration: none;
+        color: #1976D2;">
+        Return to Profile
+    </a>
+   
+
+</div>
+
+{% endblock %}
