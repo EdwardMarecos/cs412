@@ -85,6 +85,17 @@ class Profile(models.Model):
             # If no existing friendship, create one
             Friend.objects.create(profile1=self, profile2=other)
 
+    def get_news_feed(self):
+        """Return a queryset of status messages for the profile and their friends."""
+        # Collect the profile IDs of self and friends
+        friend_ids = [friend.id for friend in self.get_friends()]
+        all_profile_ids = friend_ids + [self.id]
+
+        # Query StatusMessages for these profile IDs
+        return StatusMessage.objects.filter(
+            profile_id__in=all_profile_ids
+        ).order_by('-timestamp')
+
 class StatusMessage(models.Model):
     ''' model the data attributes of Facebook status message. 
     This StatusMessage model will need to include the following 

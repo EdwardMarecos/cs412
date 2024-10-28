@@ -180,8 +180,16 @@ class ShowFriendSuggestionsView(DetailView):
         context['profile_pk'] = self.kwargs['pk']  # Pass the profile's primary key for the cancel link
         return context
 
-    
-    
+class ShowNewsFeedView(DetailView):
+    ''' displays the news feed for a single Profile '''
+    model = Profile
+    template_name = 'mini_fb/news_feed.html'
+    context_object_name = 'news'
 
+    def get_context_data(self, **kwargs):
+        '''Provide context for the news feed view.'''
+        context = super().get_context_data(**kwargs)
+        context['ret_profile'] = self.kwargs['pk']  # return to profile from news
+        return context
 
 

@@ -16,8 +16,31 @@
             <h1 class="header-title">Mini FB</h1>
             <nav>
                 <ul>
+                    <!-- Conditionally render the show profiles button if not on base -->
+                    {% if not profiles %}
                     <li><a href="{% url 'base' %}">Profiles</a></li>
-                    <li><a href="{% url 'create_profile' %}">Create Profile</a></li> <!-- Create a new profile button -->
+                    {% endif %}
+                    {% if profiles %}
+                    <li><a href="{% url 'create_profile' %}">Create New Profile</a></li> <!-- Create a new profile button -->
+                    {% endif %}
+                    <!-- if on news page add a button to go back to profile page -->
+                    {% if news %}
+                    <li><a href="{% url 'show_profile' ret_profile %}">Back to Profile</a></li> <!-- Profile Page button -->
+                    {% endif %}
+                    <!-- Conditionally render the News Feed button if on a profile page -->
+                    {% if profile %}
+                    <li>
+                        <a href="{% url 'news_feed' profile.pk %}" style="
+                            background-color: #42A5F5;
+                            color: white;
+                            padding: 10px;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            transition: background-color 0.3s;">
+                            News Feed
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </nav>
         </header>

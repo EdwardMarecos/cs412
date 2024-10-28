@@ -1,0 +1,123 @@
+<!-- templates/mini_fb/news_feed.html -->
+
+<!-- 
+display the news feed for a single Profile. 
+The news feed should show each StatusMessage, 
+along with the profile image and name of the 
+person who wrote it.
+-->
+
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+<div class="container">
+
+    <h3 style="color: #1976D2;">News Feed</h3>
+    {% for message in news.get_news_feed %}
+        <div style="
+            margin-bottom: 15px; 
+            padding: 10px; 
+            background-color: #f9f9f9; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+
+        <!-- Display pfp and name -->
+        <div style="
+            margin: 15px; 
+            padding: 10px; 
+            background-color: #f9f9f9; 
+            border-radius: 10px; 
+            display: flex; 
+            justify-content: left; 
+            align-items: center;
+            ">
+            <div style="max-width: 200px;">
+                <img src="{{ message.profile.get_profile_image }}" alt="Profile Image" 
+                    style="width: 75px;
+                    height: 75px;
+                    border-radius: 50px;
+                    object-fit: cover;">
+            </div>
+            <div style="padding-left: 10px;">
+                <h2><strong>{{ message.profile.first_name }} {{ message.profile.last_name }}</strong></h2>          
+            </div>
+        </div>
+
+        <!-- Images Section -->
+        <div style="
+        display: flex; 
+        flex-wrap: wrap;  /* Wrap to the next row if needed */
+        gap: 10px; 
+        margin-left: 20px; 
+        max-width: 100%;  /* Prevent overflow from the screen */
+        justify-content: flex-start;  /* Align images to the left */
+        ">
+        {% for img in message.get_images %}
+        <div style="
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            overflow: visible;
+            transition: all 0.3s ease-in-out;
+        ">
+            <img src="{{ img.image.url }}" alt="Status Image" 
+                style="
+                    width: 100px;
+                    height: 100px;
+                    border-radius: 15px;
+                    object-fit: cover;
+                    transition: all 0.3s ease-in-out;
+                "
+                onmouseover="
+                    const ratio = this.naturalHeight / this.naturalWidth;
+                    let newWidth = 160;
+                    let newHeight = 160 * ratio;
+
+                    // Ensure minimum size of 100px in both width and height
+                    if (newHeight < 100) {
+                        newHeight = 100;
+                        newWidth = 100 / ratio;
+                    }
+                    if (newWidth < 100) {
+                        newWidth = 100;
+                        newHeight = 100 * ratio;
+                    }
+
+                    this.style.width = newWidth + 'px'; 
+                    this.style.height = newHeight + 'px';
+                "
+                onmouseout="
+                    this.style.width = '100px'; 
+                    this.style.height = '100px';
+                ">
+        </div>
+        {% endfor %}
+        </div>
+
+        <!-- Status Message Text -->
+        <div style="flex: 1; margin-left: 20px; padding-bottom: 20px;">
+            <p style="color:#1976D2;">
+                " <strong>{{ message.message }}</strong> "
+                <br>
+            </p>
+            <!-- date/time and Action Buttons (Edit/Delete) -->
+            <div style="
+                display: flex;
+                gap: 10px; 
+                margin-top: auto; 
+                bottom: 0; 
+                position: relative;">
+                
+                <strong>Shared on {{ message.timestamp|date:"F d, Y h:i A" }}</strong> 
+                
+            </div>
+        </div>
+
+    </div>
+    {% empty %}
+    <p>No status messages yet. Be the first to post one!</p>
+    {% endfor %}
+</div>
+
+{% endblock %}
+

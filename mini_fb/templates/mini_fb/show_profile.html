@@ -61,78 +61,111 @@ pleasing.
     </div>
 </div>
 
-<!-- Existing Status Messages Section -->
-<div class="container" style="margin-top: 30px;">
-    <h3 style="color: #1976D2;">Status Messages</h3>
 
-    {% for message in profile.get_status_messages %}
-    <div style="
-        margin-bottom: 15px; 
-        padding: 10px; 
-        background-color: #f9f9f9; 
-        border-radius: 10px; 
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center;">
-        
-        <!-- Status Message Text -->
-        <div style="flex: 1;">
-            <p>
-                {{ message.message }} <br>
-            </p>
-            <!-- date/time and Action Buttons (Edit/Delete) -->
+    <!-- Existing Status Messages Section -->
+    <div class="container" style="margin-top: 30px;">
+        <h3 style="color: #1976D2;">Status Messages</h3>
+
+        {% for message in profile.get_status_messages %}
+        <div style="
+            margin-bottom: 15px; 
+            padding: 10px; 
+            background-color: #f9f9f9; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+
+            <!-- Images Section -->
             <div style="
-                display: flex;
+                display: flex; 
+                flex-wrap: wrap;  
                 gap: 10px; 
-                margin-top: auto; 
-                bottom: 0; 
-                position: relative;">
-                
-                <strong>{{ message.timestamp|date:"F d, Y h:i A" }}:</strong> 
-                
-                <!-- Edit Button -->
-                <a href="{% url 'update_status' profile.pk message.pk %}" style="
-                    background-color: #42A5F5; 
-                    color: white; 
-                    padding: 5px 10px; 
-                    border-radius: 5px; 
-                    text-decoration: none; 
-                    font-size: 14px;">
-                    Edit
-                </a>
+                margin-left: 20px; 
+                max-width: 100%; 
+                justify-content: flex-start;">
+                {% for img in message.get_images %}
+                <div style="
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center;
+                    overflow: visible;
+                    transition: all 0.3s ease-in-out;">
+                    <div>
+                        <img src="{{ img.image.url }}" alt="Status Image" 
+                            style="
+                                width: 100px;
+                                height: 100px;
+                                border-radius: 15px;
+                                object-fit: cover;
+                                transition: all 0.3s ease-in-out;"
+                            onmouseover="
+                                const ratio = this.naturalHeight / this.naturalWidth;
+                                let newWidth = 160;
+                                let newHeight = 160 * ratio;
 
-                <!-- Delete Button -->
-                <a href="{% url 'remove_status' profile.pk message.pk %}" style="
-                    background-color: #D32F2F; 
-                    color: white; 
-                    padding: 5px 10px; 
-                    border-radius: 5px; 
-                    text-decoration: none; 
-                    font-size: 14px;">
-                    Delete
-                </a>
-                
+                                if (newHeight < 100) {
+                                    newHeight = 100;
+                                    newWidth = 100 / ratio;
+                                }
+                                if (newWidth < 100) {
+                                    newWidth = 100;
+                                    newHeight = 100 * ratio;
+                                }
+
+                                this.style.width = newWidth + 'px'; 
+                                this.style.height = newHeight + 'px';"
+                            onmouseout="
+                                this.style.width = '100px'; 
+                                this.style.height = '100px';">
+                        <p style="text-align: center; font-size: 0.9em;">
+                            <small>{{ img.timestamp|date:"F d, Y H:i" }}</small>
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-        </div>
 
-        <!-- Images Section -->
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-left: 20px;">
-            {% for img in message.get_images %}
-            <div style="max-width: 200px;">
-                <img src="{{ img.image.url }}" alt="Status Image" 
-                     style="width: 100%; height: auto; border-radius: 10px; 
-                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                <p style="text-align: center; font-size: 0.9em;">
-                    <small>{{ img.timestamp|date:"F d, Y H:i" }}</small>
+            <!-- Status Message Text -->
+            <div style="flex: 1; margin-left: 20px; padding-bottom: 20px;">
+                <p style="color:#1976D2;">
+                    "{{ message.message }}"
                 </p>
             </div>
-            {% endfor %}
+
+            <!-- Timestamp and Action Buttons -->
+            <div style="
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                margin-top: 10px;
+                padding: 5px 0;">
+                <strong>Shared on {{ message.timestamp|date:"F d, Y h:i A" }}</strong>
+                <div style="display: flex; gap: 10px; margin-left: 20px;">
+                    <a href="{% url 'update_status' profile.pk message.pk %}" style="
+                        background-color: #42A5F5; 
+                        color: white; 
+                        padding: 5px 10px; 
+                        border-radius: 5px; 
+                        text-decoration: none; 
+                        font-size: 14px;">
+                        Edit
+                    </a>
+                    <a href="{% url 'remove_status' profile.pk message.pk %}" style="
+                        background-color: #D32F2F; 
+                        color: white; 
+                        padding: 5px 10px; 
+                        border-radius: 5px; 
+                        text-decoration: none; 
+                        font-size: 14px;">
+                        Delete
+                    </a>
+                </div>
+            </div>
         </div>
+        {% empty %}
+        <p>No status messages yet. Time to post one!</p>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>No status messages yet. Be the first to post one!</p>
-    {% endfor %}
+
 
     <!-- Show Friends Section -->
     <div class="container" style="margin-top: 30px;">
@@ -178,22 +211,20 @@ pleasing.
         {% else %}
             <p>This user has no friends yet.</p>
         {% endif %}
+
+        <!-- Link to show friend suggestions for Profile -->
+        <a href="{% url 'friend_suggestions' pk=profile.pk %}" style="
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #42A5F5;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;" 
+        onmouseover="this.style.backgroundColor='#1E88E5';" 
+        onmouseout="this.style.backgroundColor='#42A5F5';">
+        Show Friend Suggestions</a>
     </div>    
-
-    <!-- Link to show friend suggestions for Profile -->
-    <a href="{% url 'friend_suggestions' pk=profile.pk %}" style="
-    display: inline-block;
-    margin-top: 10px;
-    padding: 10px 15px;
-    background-color: #42A5F5;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;" 
-    onmouseover="this.style.backgroundColor='#1E88E5';" 
-    onmouseout="this.style.backgroundColor='#42A5F5';">
-    Show Friend Suggestions</a>
-
-</div>
 
 {% endblock %}
