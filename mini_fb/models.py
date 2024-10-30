@@ -5,11 +5,14 @@ from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 class Profile(models.Model):
     """encapsulate the idea of a Profile"""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profiles')
 
     first_name = models.TextField(blank=False)
     last_name = models.TextField(blank=False)

@@ -1,0 +1,43 @@
+<!-- file path mini_fb/templates/mini_fb/login.html -->
+
+<!-- login html page -->
+
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+    <div class="container" style="
+        max-width: 400px;
+        margin: auto;
+        padding: 30px;
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        
+        <h2 style="text-align: center;">Login</h2>
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div style="margin-bottom: 15px;">
+                <label for="id_username">Username</label>
+                <input type="text" name="username" id="id_username" required>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="id_password">Password</label>
+                <input type="password" name="password" id="id_password" required>
+            </div>
+
+            <input type="hidden" name="next" value="{% url 'base' %}">
+            <button type="submit" style="
+                background-color: #42A5F5;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;">
+                Login
+            </button>
+        </form>
+    </div>
+{% endblock %}

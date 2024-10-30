@@ -3,6 +3,8 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Profile, StatusMessage, Image, Friend
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from .forms import CreateProfileForm, CreateStatusMessageForm, UpdateProfileForm # import the form
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
@@ -44,11 +46,24 @@ class CreateProfileView(CreateView):
         """Redirect to the new profile's detail view after creation."""
         return reverse('show_profile', kwargs={'pk': self.object.pk})
 
-class CreateStatusMessageView(CreateView):
+class CreateStatusMessageView(LoginRequiredMixin, CreateView):
     '''A view to create a status message for a Profile.'''
     model = StatusMessage
     form_class = CreateStatusMessageForm
     template_name = 'mini_fb/create_status_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to handle permission denial"""
+        try:
+            # Get the profile object based on the primary key in the URL kwargs
+            profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
+            # Check if the profile belongs to the logged-in user
+            if profile.user != self.request.user:
+                raise PermissionDenied
+            return super().dispatch(request, *args, **kwargs)
+        except PermissionDenied:
+            # Redirect to custom access denied page if permission is denied
+            return redirect('access_denied')
 
     def get_context_data(self, **kwargs):
         # Get the context dictionary from the base implementation
@@ -81,10 +96,25 @@ class CreateStatusMessageView(CreateView):
         # Redirect to the profile page of the Profile after a successful status message creation
         return reverse('show_profile', kwargs={'pk': self.kwargs['pk']})
     
-class UpdateProfileView(UpdateView):
+class UpdateProfileView(LoginRequiredMixin, UpdateView):
     model = Profile
     form_class = UpdateProfileForm
     template_name = 'mini_fb/update_profile_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to handle permission denial"""
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except PermissionDenied:
+            # Redirect to our custom access denied page if permission is denied
+            return redirect('access_denied')
+
+    def get_object(self, queryset=None):
+        """Ensure the logged-in user can only update their own profile."""
+        profile = super().get_object(queryset)
+        if profile.user != self.request.user:
+            raise PermissionDenied  # This will be caught by dispatch
+        return profile
 
     def form_valid(self, form):
         profile = form.save(commit=False)
@@ -104,10 +134,25 @@ class UpdateProfileView(UpdateView):
         ''' Redirect to the profile page after a successful update. '''
         return reverse('show_profile', kwargs={'pk': self.object.pk})
     
-class UpdateStatusMessageView(UpdateView):
+class UpdateStatusMessageView(LoginRequiredMixin, UpdateView):
     model = StatusMessage
     form_class = CreateStatusMessageForm
     template_name = 'mini_fb/update_status_message_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to handle permission denial"""
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except PermissionDenied:
+            # Redirect to custom access denied page if permission is denied
+            return redirect('access_denied')
+
+    def get_object(self, queryset=None):
+        """Ensure the logged-in user can only update their own status message."""
+        status_message = super().get_object(queryset)
+        if status_message.profile.user != self.request.user:
+            raise PermissionDenied
+        return status_message
 
     def get_success_url(self):
         """Redirect to the profile page of the related profile after update."""
@@ -116,16 +161,27 @@ class UpdateStatusMessageView(UpdateView):
         # Redirect to the correct profile page
         return reverse('show_profile', kwargs={'pk': profile_pk})
 
-class DeleteStatusMessageView(DeleteView):
+class DeleteStatusMessageView(LoginRequiredMixin, DeleteView):
     model = StatusMessage
     template_name = 'mini_fb/delete_status_form.html'
     context_object_name = 'status_message'
 
-    def get_object(self):
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to handle permission denial"""
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except PermissionDenied:
+            # Redirect to custom access denied page if permission is denied
+            return redirect('access_denied')
+
+    def get_object(self, queryset=None):
         """
         Override get_object to ensure we retrieve the correct status message
         that matches both the profile and the status message ID.
         """
+        status_message = super().get_object(queryset)
+        if status_message.profile.user != self.request.user:
+            raise PermissionDenied
         profile_pk = self.kwargs['profile_pk']
         status_pk = self.kwargs['pk']
         return get_object_or_404(StatusMessage, pk=status_pk, profile_id=profile_pk)
@@ -146,7 +202,7 @@ class DeleteStatusMessageView(DeleteView):
         profile_pk = self.get_object().profile.pk
         return reverse('show_profile', kwargs={'pk': profile_pk})
 
-class CreateFriendView(CreateView):
+class CreateFriendView(LoginRequiredMixin, CreateView):
     ''' Implement/override the dispatch method, in 
     which we can read the URL parameters (from self.kwargs), 
     use the object manager to find the requisite Profile objects, 
@@ -192,4 +248,8 @@ class ShowNewsFeedView(DetailView):
         context['ret_profile'] = self.kwargs['pk']  # return to profile from news
         return context
 
+def custom_access_denied_view(request, exception=None):
+    """Custom view for handling permission denied (403) errors."""
+    print("Custom 403 view is being used")
+    return render(request, 'mini_fb/403.html', status=403)
 

@@ -1,0 +1,31 @@
+<!-- File Path: mini_fb/templates/mini_fb/403.html -->
+<!-- This template is used to display a custom 403 Forbidden 
+error page when a user attempts to access or edit a profile 
+that they are not authorized to. -->
+
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+    <div class="container" style="text-align: center; margin-top: 50px;">
+        <h2>Access Denied</h2>
+        <img src="/media/errors/403cat.png" alt="403 Error Cat" class="error-cat">
+        <p>You are not authorized to edit this profile.</p>
+        <a href="{% url 'base' %}" style="text-decoration: none; color: #42A5F5;">Return to Home Page</a>
+    </div>
+
+    <style>
+        .container {
+            position: relative;
+        }
+        .error-cat {
+            margin-top: 20px;
+            width: 200px;
+            animation: spin 4s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+{% endblock %}
+
