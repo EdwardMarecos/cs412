@@ -1,0 +1,23 @@
+<!--  mini_fb/templates/mini_fb/logout.html -->
+
+<!-- logout form -->
+
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+<div class="container" style="text-align: center; margin-top: 50px;">
+    <h2>You have successfully logged out.</h2>
+    <p>We hope to see you again soon!</p>
+    <a href="{% url 'login' %}" style="
+        padding: 10px 20px;
+        background-color: #42A5F5;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    " onmouseover="this.style.backgroundColor='#1E88E5';"
+    onmouseout="this.style.backgroundColor='#42A5F5';">
+        Log in Again
+    </a>
+</div>
+{% endblock %}

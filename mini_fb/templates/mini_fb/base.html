@@ -18,30 +18,36 @@
                 <ul>
                     <!-- Conditionally render the "Profiles" button if not on the profiles page -->
                     {% if not profiles %}
-                        <li><a href="{% url 'base' %}">Profiles</a></li>
+                        <li><a href="{% url 'base' %}">All Profiles</a></li>
                     {% endif %}
 
-                    <!-- login / logout wether a user is logged in or not -->
-                    {% if request.user.is_authenticated %}
-                        <li><a href="{% url 'logout' %}">Logout</a></li>
-                    {% else %}
+                    <!-- login if a user is not -->
+                    {% if not request.user.is_authenticated and request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'logout' %}
                         <li><a href="{% url 'login' %}">Login</a></li>
                     {% endif %}
 
+
                     <!-- Render "Create New Profile" button if profiles context exists -->
-                    {% if profiles %}
+                    {% if request.user.is_authenticated %}
+                        <!-- {{request.user.profile.pk}}
+                        {{request.user.pk}} -->
+                        {% if not profile and not news  %}
+                            <li><a href="{% url 'show_profile' pk=request.user.profile.pk %}">Your Profile</a></li>
+                        {% endif %}
+                        <!-- Render "Back to Profile" button if on the news page -->
+                        {% if news and request.user.profile %}
+                            <li><a href="{% url 'show_profile' request.user.profile.pk %}">Back to Profile</a></li>
+                        {% endif %}
+                    {% else %}
                         <li><a href="{% url 'create_profile' %}">Create New Profile</a></li>
                     {% endif %}
 
-                    <!-- Render "Back to Profile" button if on the news page -->
-                    {% if news %}
-                        <li><a href="{% url 'show_profile' ret_profile %}">Back to Profile</a></li>
-                    {% endif %}
+                    
 
                     <!-- Render "News Feed" button if on a profile page -->
-                    {% if profile %}
+                    {% if profile and profile.user == request.user %}
                         <li>
-                            <a href="{% url 'news_feed' profile.pk %}" style="
+                            <a href="{% url 'news_feed' %}" style="
                                 background-color: #42A5F5;
                                 color: white;
                                 padding: 10px;
@@ -64,6 +70,29 @@
         {% endblock %}
 
         <footer>
+            {% if request.user.is_authenticated %}
+                <li style="display: inline-block; vertical-align: middle;">
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="
+                        padding: 10px 20px;
+                        background-color: #FF6F61; /* Soft red color */
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        text-decoration: none;
+                        transition: background-color 0.3s ease;
+                        display: inline-block;
+                        vertical-align: middle;
+                        height: 40px; /* Ensure consistent height */
+                        " onmouseover="this.style.backgroundColor='#E57373';"
+                        onmouseout="this.style.backgroundColor='#FF6F61';">
+                            <strong>Logout of {{ request.user.username }}</strong>
+                        </button>
+                    </form>
+                </li>
+            {% endif %}
             <h3>Mini Fb</h3>
             <p>Made by Ed <br> no rights reserved ¯\_(ツ)_/¯</p>
         </footer>

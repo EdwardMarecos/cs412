@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     """encapsulate the idea of a Profile"""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profiles')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     first_name = models.TextField(blank=False)
     last_name = models.TextField(blank=False)
