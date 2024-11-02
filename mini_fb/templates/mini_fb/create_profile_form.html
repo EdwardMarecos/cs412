@@ -29,50 +29,117 @@ and store a new Profile instance in the database.
     border-radius: 15px; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
     
-    <h2 style="text-align: center; margin-bottom: 20px; color: #1976D2;">
-        Create a Profile
-    </h2>
+    <h2 style="text-align: center; margin-bottom: 20px; color: #1976D2;">Create Your Profile</h2>
 
-    <form method="POST" enctype="multipart/form-data" 
-          style="display: flex; flex-direction: column; gap: 20px;">
+    <form method="POST" enctype="multipart/form-data" action="" style="display: flex; flex-direction: column; gap: 20px;">
         {% csrf_token %}
         
-        {{ form.non_field_errors }}
-
-        <!-- Loop through all fields except the file input cause i wanted a pretty upload button-->
-        {% for field in form %}
-        {% if field.name != 'profile_img_file' %}
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label for="{{ field.id_for_label }}" style="
-                font-weight: bold; 
-                color: #1976D2;">
-                {{ field.label }}
-            </label>
-
-            <!-- Check if the field is the birth date field -->
-            {% if field.name == 'birth_date' %}
-            <div class="birth-date-container" style="display: flex; gap: 10px;">
-                {{ field }}
+        <!-- User Creation Form -->
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #4A90E2;">Account Information</h3>
+            {{ user_form.non_field_errors }}
+            <div style="margin-bottom: 15px;">
+                <label for="id_username" style="font-weight: bold; color: #1976D2;">Username</label><br>
+                <input type="text" name="username" id="id_username" required style="
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
             </div>
-            {% else %}
-            <div style="display: flex; flex-direction: column;">
-                {{ field }}
-            </div>
-            {% endif %}
 
-            <!-- Display field errors -->
-            <div style="color: red;">
-                {{ field.errors }}
+            <div style="margin-bottom: 15px;">
+                <label for="id_password1" style="font-weight: bold; color: #1976D2;">Password</label><br>
+                <input type="password" name="password1" id="id_password1" required style="
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="id_password2" style="font-weight: bold; color: #1976D2;">Confirm Password</label><br>
+                <input type="password" name="password2" id="id_password2" required style="
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
             </div>
         </div>
-        {% endif %}
-        {% endfor %}
+
+        <!-- Profile Form -->
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #4A90E2;">Profile Information</h3>
+            {{ form.non_field_errors }}
+            <div style="margin-bottom: 15px;">
+                <label for="id_first_name" style="font-weight: bold; color: #1976D2;">First Name</label><br>
+                <input type="text" name="first_name" id="id_first_name" required style="
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="id_last_name" style="font-weight: bold; color: #1976D2;">Last Name</label><br>
+                <input type="text" name="last_name" id="id_last_name" required style="
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="id_birth_date" style="font-weight: bold; color: #1976D2;">Birthdate</label><br>
+                <input type="date" name="birth_date" id="id_birth_date" required style="
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="id_city" style="font-weight: bold; color: #1976D2;">City</label><br>
+                <input type="text" name="city" id="id_city" required style="
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="id_email_address" style="font-weight: bold; color: #1976D2;">Email Address</label><br>
+                <input type="email" name="email_address" id="id_email_address" required style="
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+            </div>
+        </div>
+
+        <!-- Image URL Input -->
+        <div style="margin-bottom: 20px;">
+            <label for="id_profile_image_url" style="font-weight: bold; color: #1976D2;">
+                Profile Image URL (Optional):
+            </label><br>
+            <input type="url" name="profile_image_url" id="id_profile_image_url" style="
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+        </div>
 
         <!-- Custom File Input Button -->
         <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label for="profile_img_file" style="
-                font-weight: bold; 
-                color: #1976D2;">
+            <label for="profile_img_file" style="font-weight: bold; color: #1976D2;">
                 Or Upload Your Own Profile Picture:
             </label>
             <div class="custom-file-input">
@@ -86,16 +153,17 @@ and store a new Profile instance in the database.
         <button type="submit" style="
             background-color: #42A5F5;
             color: white;
-            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
-            font-size: 18px;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-            font-family: 'Arial', sans-serif;"
+            font-weight: bold;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.1s ease;"
             onmouseover="this.style.backgroundColor='#1E88E5';"
             onmouseout="this.style.backgroundColor='#42A5F5';">
-            Create Profile!
+            Create Profile
         </button>
     </form>
 </div>

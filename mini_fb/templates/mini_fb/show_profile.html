@@ -54,6 +54,34 @@ pleasing.
             onmouseover="this.style.backgroundColor='#FFB300';" 
             onmouseout="this.style.backgroundColor='#FFC107';">
             Update Profile</a>
+        {% elif not is_friend %}
+            <!-- Add Friend Button -->
+            <form method="POST" action="{% url 'add_friend' other_pk=profile.pk %}?next={% url 'show_profile' profile.pk %}" style="margin-top: 10px;">
+                {% csrf_token %}
+                <button type="submit" style="
+                    background-color: #42A5F5;
+                    color: white;
+                    border: none;
+                    padding: 10px 15px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;"
+                    onmouseover="this.style.backgroundColor='#1E88E5';"
+                    onmouseout="this.style.backgroundColor='#42A5F5';">
+                    Add Friend
+                </button>
+            </form>
+        {% else %}
+            <!-- Already Friends -->
+            <button style="
+                display: inline-block;
+                margin-top: 10px;
+                padding: 10px 15px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: default;">Friends</button>
         {% endif %}
     </div>
 

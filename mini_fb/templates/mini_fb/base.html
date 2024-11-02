@@ -31,7 +31,7 @@
                     {% if request.user.is_authenticated %}
                         <!-- {{request.user.profile.pk}}
                         {{request.user.pk}} -->
-                        {% if not profile and not news  %}
+                        {% if not is_own_profile and not news  %}
                             <li><a href="{% url 'show_profile' pk=request.user.profile.pk %}">Your Profile</a></li>
                         {% endif %}
                         <!-- Render "Back to Profile" button if on the news page -->

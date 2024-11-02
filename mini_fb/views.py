@@ -5,10 +5,12 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Profile, StatusMessage, Image, Friend
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from django.core.exceptions import PermissionDenied
 from .forms import CreateProfileForm, CreateStatusMessageForm, UpdateProfileForm # import the form
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
 # Create your views here.
@@ -34,22 +36,66 @@ class ShowProfilePage(DetailView):
             return get_object_or_404(Profile, pk=self.kwargs['pk'])
         return get_object_or_404(Profile, user=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        """Add extra context to indicate if this is the logged-in user's profile."""
+        context = super().get_context_data(**kwargs)
+        current_user_profile = get_object_or_404(Profile, user=self.request.user)
+        profile_viewed = self.get_object()
+        context['is_own_profile'] = self.object.user == self.request.user
+        context['is_friend'] = profile_viewed in current_user_profile.get_friends()
+        return context
+
 class CreateProfileView(CreateView):
     '''Display a form to create a new Profile object.'''
     model = Profile  # Use the Profile model
     form_class = CreateProfileForm  # Use the CreateProfileForm to generate the form
     template_name = 'mini_fb/create_profile_form.html'  # Template for the form
+    success_url = reverse_lazy('base')
+
+    def get_context_data(self, **kwargs):
+        """Add the UserCreationForm to the context data."""
+        context = super().get_context_data(**kwargs)
+        if 'user_form' not in context:
+            context['user_form'] = UserCreationForm()
+        return context
 
     def form_valid(self, form):
-        # Check if both fields are empty before saving
-        profile = form.save(commit=False)  # Don't save to the database just yet 
-        # (i was having a bug that it was saving before applying changes if certain fields werent filled [fields i wanted optional])
+        # Reconstruct the UserCreationForm with POST data
+        user_form = UserCreationForm(self.request.POST)
+        if user_form.is_valid():
+            # Save the user and get the instance
+            user = user_form.save()
 
-        if not profile.profile_img_file and not profile.profile_img_url:
-            profile.profile_img_url = '/media/profile_images/default_pfp.jpg'  # Set default URL for default pfp
+            # Update the User instance with profile details
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email_address']
+            user.save()
 
-        profile.save()  # Now save to the database
-        return super().form_valid(form)
+            # Attach the user to the profile
+            form.instance.user = user
+
+            # Handle the profile image logic
+            profile_image_url = form.cleaned_data.get('profile_image_url')
+            profile_img_file = self.request.FILES.get('profile_img_file')
+
+            if profile_image_url:
+                form.instance.profile_img_url = profile_image_url
+            elif profile_img_file:
+                form.instance.profile_img_file = profile_img_file
+            else:
+                # Assign a default image URL if both are empty
+                form.instance.profile_img_url = '/media/profile_images/default_pfp.jpg'
+
+            # Save the profile instance and automatically log in the user
+            response = super().form_valid(form)
+            login(self.request, user)
+            return response
+        else:
+            # If the UserCreationForm is not valid, re-render the form with errors
+            return self.render_to_response(
+                self.get_context_data(form=form, user_form=user_form)
+            )
 
     def get_success_url(self):
         """Redirect to the new profile's detail view after creation."""
@@ -111,7 +157,7 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         ''' Redirect to the profile page after a successful update. '''
-        return reverse('show_profile')
+        return reverse('show_profile', kwargs={'pk': self.object.pk})
     
 class UpdateStatusMessageView(LoginRequiredMixin, UpdateView):
     model = StatusMessage
@@ -122,8 +168,21 @@ class UpdateStatusMessageView(LoginRequiredMixin, UpdateView):
         """
         Override get_object to return the StatusMessage object for the logged-in user.
         """
-        # Use custom get_object_or_403 to retrieve the status message for the logged-in user
+        # Use custom get_object_or_404 to retrieve the status message for the logged-in user
         return get_object_or_404(StatusMessage, pk=self.kwargs['pk'], profile__user=self.request.user)
+
+    def form_valid(self, form):
+        # Save the updated status message object
+        sm = form.save()
+
+        # Get the list of uploaded files
+        files = self.request.FILES.getlist('files')
+        for f in files:
+            # Create an Image object for each file and link it to the updated status message
+            image = Image(image=f, message=sm)
+            image.save()
+
+        return super().form_valid(form)
 
     def get_success_url(self):
         """Redirect to the profile page of the related profile after update."""
@@ -166,14 +225,21 @@ class CreateFriendView(LoginRequiredMixin, CreateView):
     def dispatch(self, request, *args, **kwargs):
         # Retrieve both profiles
         profile = get_object_or_404(Profile, user=self.request.user)
-        other_profile = get_object_or_404(Profile, user__username=self.kwargs['other_pk'])
+        
+        # Update to retrieve other_profile by primary key
+        other_profile = get_object_or_404(Profile, pk=self.kwargs['other_pk'])
 
         # Ensure they aren't the same profile (no self-friending)
         if profile != other_profile:
             profile.add_friend(other_profile)  # Add the friend
 
-        # Redirect back to the original profile's page
-        return redirect('show_profile')
+        # Check for a "next" parameter to determine redirection behavior
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return redirect(next_url)
+
+        # Default redirection to the user's own profile page
+        return redirect('show_profile', pk=profile.pk)
 
 class ShowFriendSuggestionsView(LoginRequiredMixin, DetailView):
     ''' display the friend suggestions for a single profile
