@@ -26,5 +26,5 @@ urlpatterns = [
 
     # Authentication URLs
     path('login/', auth_views.LoginView.as_view(template_name='mini_fb/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='mini_fb/logout.html'), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='mini_fb/logged_out.html'), name='logout'),
 ]
