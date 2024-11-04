@@ -157,10 +157,17 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         profile = form.save(commit=False)
-
+        # Update User model with profile details if they have changed
+        user = profile.user
+        if form.cleaned_data['email_address'] != user.email:
+            user.email = form.cleaned_data['email_address']
         if form.cleaned_data.get('clear_profile_image'):
             profile.profile_img_url = '/media/profile_images/default_pfp.jpg'  # Set default URL for default pfp
             profile.profile_img_file = None
+
+        # Save the updated User and Profile models
+        user.save()
+        profile.save()
 
         profile.save()
         return super().form_valid(form)
