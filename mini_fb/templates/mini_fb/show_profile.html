@@ -54,7 +54,7 @@ pleasing.
             onmouseover="this.style.backgroundColor='#FFB300';" 
             onmouseout="this.style.backgroundColor='#FFC107';">
             Update Profile</a>
-        {% elif not is_friend %}
+        {% elif not is_friend and request.user.is_authenticated %}
             <!-- Add Friend Button -->
             <form method="POST" action="{% url 'add_friend' other_pk=profile.pk %}?next={% url 'show_profile' profile.pk %}" style="margin-top: 10px;">
                 {% csrf_token %}
@@ -71,7 +71,7 @@ pleasing.
                     Add Friend
                 </button>
             </form>
-        {% else %}
+        {% elif request.user.is_authenticated %}
             <!-- Already Friends -->
             <button style="
                 display: inline-block;

@@ -1,7 +1,7 @@
 # mini_fb/views.py
 # define the views for the mini_fb app
 
-from django.http import HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Profile, StatusMessage, Image, Friend
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -29,20 +29,32 @@ class ShowProfilePage(DetailView):
     context_object_name = 'profile'  # Used to access profile data in the template
 
     def get_object(self, queryset=None):
-        # Override get_object to return the Profile object.
+        # Retrieve the Profile object based on the provided `pk` in the URL.
         # If a `pk` is provided, return that user's profile;
         # otherwise, return the logged-in user's profile.
         if 'pk' in self.kwargs:
             return get_object_or_404(Profile, pk=self.kwargs['pk'])
-        return get_object_or_404(Profile, user=self.request.user)
-
+        elif self.request.user.is_authenticated:
+            return get_object_or_404(Profile, user=self.request.user)
+        else:
+            # If no pk is provided and the user is not logged in, raise 404.
+            raise Http404("Profile not found.")
+        
     def get_context_data(self, **kwargs):
-        """Add extra context to indicate if this is the logged-in user's profile."""
+        """Add extra context to indicate if this is the logged-in user's profile and if they are friends."""
         context = super().get_context_data(**kwargs)
-        current_user_profile = get_object_or_404(Profile, user=self.request.user)
-        profile_viewed = self.get_object()
-        context['is_own_profile'] = self.object.user == self.request.user
-        context['is_friend'] = profile_viewed in current_user_profile.get_friends()
+
+        # Add context only if the user is authenticated
+        if self.request.user.is_authenticated:
+            current_user_profile = get_object_or_404(Profile, user=self.request.user)
+            profile_viewed = self.get_object()
+            context['is_own_profile'] = profile_viewed.user == self.request.user
+            context['is_friend'] = profile_viewed in current_user_profile.get_friends()
+        else:
+            # For unauthenticated users, set `is_own_profile` and `is_friend` to False
+            context['is_own_profile'] = False
+            context['is_friend'] = False
+
         return context
 
 class CreateProfileView(CreateView):
