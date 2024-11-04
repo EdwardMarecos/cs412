@@ -40,21 +40,23 @@ and store a new Profile instance in the database.
             {{ user_form.non_field_errors }}
             <div style="margin-bottom: 15px;">
                 <label for="id_username" style="font-weight: bold; color: #1976D2;">Username</label><br>
-                {{ user_form.username }}
-                <input type="text" name="username" id="id_username" required style="
-                    width: 100%;
-                    padding: 10px;
-                    border: 1px solid #ccc;
-                    border-radius: 5px;
-                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
-                    <div style="color: red;">
-                        {{ user_form.username.errors }}
-                    </div>
+                {% if user_form.username %} 
+                    {{ user_form.username }}
+                {% else %}
+                    <input type="text" name="username" id="id_username" required style="
+                        width: 100%;
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        border-radius: 5px;
+                        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                {% endif %}
+                <div style="color: red;">
+                    {{ user_form.username.errors }}
+                </div>
             </div>
 
             <div style="margin-bottom: 15px;">
                 <label for="id_password1" style="font-weight: bold; color: #1976D2;">Password</label><br>
-                {{ user_form.password1 }}
                 <input type="password" name="password1" id="id_password1" required style="
                     width: 100%;
                     padding: 10px;
@@ -68,7 +70,6 @@ and store a new Profile instance in the database.
 
             <div style="margin-bottom: 15px;">
                 <label for="id_password2" style="font-weight: bold; color: #1976D2;">Confirm Password</label><br>
-                {{ user_form.password2 }}
                 <input type="password" name="password2" id="id_password2" required style="
                     width: 100%;
                     padding: 10px;
@@ -88,59 +89,74 @@ and store a new Profile instance in the database.
             
             <div style="margin-bottom: 15px;">
                 <label for="id_first_name" style="font-weight: bold; color: #1976D2;">First Name</label><br>
-                {{ form.first_name }}
-                <input type="text" name="first_name" id="id_first_name" required style="
-                    width: 100%;
-                    padding: 10px;
-                    border: 1px solid #ccc;
-                    border-radius: 5px;
-                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                {% if form.first_name %}
+                    {{ form.first_name }}
+                {% else %}
+                    <input type="text" name="first_name" id="id_first_name" required style="
+                        width: 100%;
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        border-radius: 5px;
+                        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                {% endif %}
             </div>
 
             <div style="margin-bottom: 15px;">
                 <label for="id_last_name" style="font-weight: bold; color: #1976D2;">Last Name</label><br>
-                {{ form.last_name }}
-                <input type="text" name="last_name" id="id_last_name" required style="
-                    width: 100%;
-                    padding: 10px;
-                    border: 1px solid #ccc;
-                    border-radius: 5px;
-                    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                {% if form.last_name %}
+                    {{ form.last_name }}
+                {% else %}
+                    <input type="text" name="last_name" id="id_last_name" required style="
+                        width: 100%;
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        border-radius: 5px;
+                        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                {% endif %}
             </div>
 
             <div style="margin-bottom: 15px;">
                 <label for="id_birth_date" style="font-weight: bold; color: #1976D2;">Birthdate</label><br>
-                {{ form.email_address }}
-                <input type="date" name="birth_date" id="id_birth_date" required style="
+                {% if form.birth_date %}
+                    {{ form.birth_date }}
+                {% else %}
+                    <input type="date" name="birth_date" id="id_birth_date" required style="
                     width: 100%;
                     padding: 10px;
                     border: 1px solid #ccc;
                     border-radius: 5px;
                     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                {% endif %}
             </div>
 
             <div style="margin-bottom: 15px;">
                 <label for="id_city" style="font-weight: bold; color: #1976D2;">City</label><br>
-                <input type="text" name="city" id="id_city" required style="
+                {% if form.city %}
+                    {{ form.city }}
+                {% else %}
+                    <input type="text" name="city" id="id_city" required style="
                     width: 100%;
                     padding: 10px;
                     border: 1px solid #ccc;
                     border-radius: 5px;
                     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                {% endif %}
             </div>
 
             <div style="margin-bottom: 15px;">
                 <label for="id_email_address" style="font-weight: bold; color: #1976D2;">Email Address</label><br>
-                <input type="email" name="email_address" id="id_email_address" required style="
+                {% if form.email_address %}
+                    {{ form.email_address }}
+                {% else %}
+                    <input type="email" name="email_address" id="id_email_address" required style="
                     width: 100%;
                     padding: 10px;
                     border: 1px solid #ccc;
                     border-radius: 5px;
                     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                {% endif %}
+                
             </div>
-                <div style="color: red;">
-                    {{ form.email_address.errors }}
-                </div>
         </div>
 
         <!-- Image URL Input -->
