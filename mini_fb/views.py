@@ -55,8 +55,9 @@ class CreateProfileView(CreateView):
     def get_context_data(self, **kwargs):
         """Add the UserCreationForm to the context data."""
         context = super().get_context_data(**kwargs)
+        # Include the user form in context to populate fields upon re-render
         if 'user_form' not in context:
-            context['user_form'] = UserCreationForm()
+            context['user_form'] = kwargs.get('user_form') or UserCreationForm()
         return context
 
     def form_valid(self, form):
@@ -65,8 +66,6 @@ class CreateProfileView(CreateView):
         if user_form.is_valid():
             # Save the user and get the instance
             user = user_form.save()
-
-            # Update the User instance with profile details
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
             user.email = form.cleaned_data['email_address']
@@ -84,15 +83,14 @@ class CreateProfileView(CreateView):
             elif profile_img_file:
                 form.instance.profile_img_file = profile_img_file
             else:
-                # Assign a default image URL if both are empty
                 form.instance.profile_img_url = '/media/profile_images/default_pfp.jpg'
 
-            # Save the profile instance and automatically log in the user
+            # Save the profile instance and log in the user
             response = super().form_valid(form)
             login(self.request, user)
             return response
         else:
-            # If the UserCreationForm is not valid, re-render the form with errors
+            # Re-render the form with user form errors if invalid
             return self.render_to_response(
                 self.get_context_data(form=form, user_form=user_form)
             )

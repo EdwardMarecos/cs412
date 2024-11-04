@@ -40,32 +40,44 @@ and store a new Profile instance in the database.
             {{ user_form.non_field_errors }}
             <div style="margin-bottom: 15px;">
                 <label for="id_username" style="font-weight: bold; color: #1976D2;">Username</label><br>
+                {{ user_form.username }}
                 <input type="text" name="username" id="id_username" required style="
                     width: 100%;
                     padding: 10px;
                     border: 1px solid #ccc;
                     border-radius: 5px;
                     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                    <div style="color: red;">
+                        {{ user_form.username.errors }}
+                    </div>
             </div>
 
             <div style="margin-bottom: 15px;">
                 <label for="id_password1" style="font-weight: bold; color: #1976D2;">Password</label><br>
+                {{ user_form.password1 }}
                 <input type="password" name="password1" id="id_password1" required style="
                     width: 100%;
                     padding: 10px;
                     border: 1px solid #ccc;
                     border-radius: 5px;
                     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                    <div style="color: red;">
+                        {{ user_form.password1.errors }}
+                    </div>
             </div>
 
             <div style="margin-bottom: 15px;">
                 <label for="id_password2" style="font-weight: bold; color: #1976D2;">Confirm Password</label><br>
+                {{ user_form.password2 }}
                 <input type="password" name="password2" id="id_password2" required style="
                     width: 100%;
                     padding: 10px;
                     border: 1px solid #ccc;
                     border-radius: 5px;
                     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
+                    <div style="color: red;">
+                        {{ user_form.password2.errors }}
+                    </div>
             </div>
         </div>
 
@@ -73,8 +85,10 @@ and store a new Profile instance in the database.
         <div style="margin-bottom: 20px;">
             <h3 style="color: #4A90E2;">Profile Information</h3>
             {{ form.non_field_errors }}
+            
             <div style="margin-bottom: 15px;">
                 <label for="id_first_name" style="font-weight: bold; color: #1976D2;">First Name</label><br>
+                {{ form.first_name }}
                 <input type="text" name="first_name" id="id_first_name" required style="
                     width: 100%;
                     padding: 10px;
@@ -85,6 +99,7 @@ and store a new Profile instance in the database.
 
             <div style="margin-bottom: 15px;">
                 <label for="id_last_name" style="font-weight: bold; color: #1976D2;">Last Name</label><br>
+                {{ form.last_name }}
                 <input type="text" name="last_name" id="id_last_name" required style="
                     width: 100%;
                     padding: 10px;
@@ -95,6 +110,7 @@ and store a new Profile instance in the database.
 
             <div style="margin-bottom: 15px;">
                 <label for="id_birth_date" style="font-weight: bold; color: #1976D2;">Birthdate</label><br>
+                {{ form.email_address }}
                 <input type="date" name="birth_date" id="id_birth_date" required style="
                     width: 100%;
                     padding: 10px;
@@ -122,6 +138,9 @@ and store a new Profile instance in the database.
                     border-radius: 5px;
                     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
             </div>
+                <div style="color: red;">
+                    {{ form.email_address.errors }}
+                </div>
         </div>
 
         <!-- Image URL Input -->
