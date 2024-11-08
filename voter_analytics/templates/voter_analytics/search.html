@@ -2,7 +2,7 @@
 
 <h3>Search Form</h3>
 <table>
-    <form action="{% if request.path == '/voter_analytics/graphs/' %}{% url 'graphs' %}{% else %}{% url 'voters' %}{% endif %}" method="get">
+    <form action="{% if request.resolver_match.url_name == 'graphs' %}{% url 'graphs' %}{% else %}{% url 'voters' %}{% endif %}" method="get">
         <tr>
         <th>Party Affiliation:</th>
         <td>
