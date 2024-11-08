@@ -9,6 +9,7 @@ gunicorn = "*"
 pillow = "*"
 plotly = "*"
 dj-database-url = "*"
+pandas = "*"
 
 [dev-packages]
 
