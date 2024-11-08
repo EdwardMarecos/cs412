@@ -1,0 +1,65 @@
+<!-- templates/voter_analytics/search.html -->
+
+<h3>Search Form</h3>
+<table>
+    <form action="{% if request.path == '/voter_analytics/graphs/' %}{% url 'graphs' %}{% else %}{% url 'voters' %}{% endif %}" method="get">
+        <tr>
+        <th>Party Affiliation:</th>
+        <td>
+            <select name="party">
+                <option value="">Any</option>
+                <option value="D ">Democrat</option>
+                <option value="R ">Republican</option>
+                <option value="U ">Unaffiliated</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>Minimum Date of Birth:</th>
+        <td>
+            <select name="min_dob">
+                <option value="">Any</option>
+                {% for year in years %}
+                    <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>Maximum Date of Birth:</th>
+        <td>
+            <select name="max_dob">
+                <option value="">Any</option>
+                {% for year in years %}
+                    <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>Voter Score:</th>
+        <td>
+            <select name="voter_score">
+                <option value="">Any</option>
+                {% for score in voter_scores %}
+                    <option value="{{ score }}">{{ score }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>Voted in Specific Elections:</th>
+        <td>
+            <label><input type="checkbox" name="voted_20state"> 2020 State</label><br>
+            <label><input type="checkbox" name="voted_21town"> 2021 Town</label><br>
+            <label><input type="checkbox" name="voted_21primary"> 2021 Primary</label><br>
+            <label><input type="checkbox" name="voted_22general"> 2022 General</label><br>
+            <label><input type="checkbox" name="voted_23town"> 2023 Town</label>
+        </td>
+    </tr>
+    <tr>
+        <td><input type="submit" value="Search"></td>
+        <td></td>
+    </tr>
+</form>
+</table>

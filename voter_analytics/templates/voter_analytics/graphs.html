@@ -1,0 +1,33 @@
+<!-- templates/voter_analytics/graphs.html -->
+
+{% extends 'voter_analytics/base.html' %}
+
+{% block content %}
+<h2>Voter Analytics Graphs</h2>
+
+<div class="row">
+    {% include "voter_analytics/search.html" %}    
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3>Voter distribution by Year of Birth</h3>
+            {{ histogram_div|safe }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>Voter distribution by Party Affiliation</h3>
+            {{ pie_div|safe }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>Vote Count by Election</h3>
+            {{ election_div|safe }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
