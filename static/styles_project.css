@@ -1,0 +1,115 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #2c2c2c; 
+    color: #e0e0e0; 
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+    margin: 0;
+}
+
+.content-wrapper {
+    flex: 1; /* Makes the content wrapper take up available space */
+}
+
+/* Header and Navigation */
+header {
+    background-color: #3d3d3d;
+    padding: 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #e0e0e0; /* Light gray */
+    font-size: 18px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #555555; /* Medium gray */
+}
+
+/* Main Content */
+main {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #3a3a3a; /* Dark gray */
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: #f5f5f5; /* White */
+    text-align: center;
+}
+
+p {
+    margin: 10px 0;
+}
+
+/* Links */
+a {
+    color: #b8c1ec; /* Soft blue for links */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #d6e0f5; /* Slightly brighter blue */
+}
+
+/* Footer */
+footer {
+    background-color: #3d3d3d;
+    color: #aaaaaa; /* Lighter gray */
+    text-align: center;
+    padding: 15px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Lists */
+ul {
+    padding-left: 20px;
+}
+
+ul li {
+    margin: 5px 0;
+}
+
+/* Buttons */
+button {
+    background-color: #5a5a5a; /* Medium gray */
+    color: #e0e0e0;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #767676; /* Lighter gray */
+}

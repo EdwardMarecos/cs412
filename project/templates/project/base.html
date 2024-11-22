@@ -1,0 +1,37 @@
+<!-- ## Create template directory project/templates/project
+## Create Template:
+## File: project/templates/project/base.html -->
+
+<!-- templates/base.html -->
+
+{% load static %}
+
+<html>
+    <head>
+        <title>{% block title %}My Project{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'styles_project.css' %}">
+    </head>
+
+    <body>
+        <div class="content-wrapper">
+            <header>
+                <nav>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'category-list' %}">Categories</a></li>
+                        <li><a href="{% url 'note-list' %}">Notes</a></li>
+                    </ul>
+                </nav>
+            </header>
+
+            <main>
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 Note Share (not real copyright)</p>
+        </footer>
+    </body>
+</html>

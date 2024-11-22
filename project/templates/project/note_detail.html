@@ -1,0 +1,16 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+<html>
+<head>
+    <title>{{ object.title }}</title>
+</head>
+<body>
+    <h1>{{ object.title }}</h1>
+    <p><strong>Topic:</strong> {{ object.topic.title }}</p>
+    <p><strong>Content:</strong> {{ object.content }}</p>
+    <p><strong>Author:</strong> {{ object.author.username }}</p>
+    <a href="{% url 'note-list' %}">Back to Notes</a>
+</body>
+</html>
+{% endblock %}
