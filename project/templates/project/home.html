@@ -1,12 +1,28 @@
 {% extends 'project/base.html' %}
 
+
 {% block title %}Home{% endblock %}
 
+
 {% block content %}
-<div>
-    <h1>Welcome to My Project</h1>
-    <p>Select an option to get started:</p>
-    <br>
-    <p>no options yet :3</p>
-</div>
+{% if request.user.is_authenticated%}
+
+    <div>
+        <h1>Welcome to My Project</h1>
+        <p>Select an option to get started:</p>
+        <br>
+        <p>no options yet :3</p>
+    </div>
+
+    {% else %}
+
+    <div>
+        <h1>Welcome to My Project</h1>
+        <p>Login to get started:</p>
+        <br>
+        <p>no options yet :3</p>
+    </div>
+
+{% endif %}
+
 {% endblock %}

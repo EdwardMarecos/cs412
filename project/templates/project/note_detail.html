@@ -1,16 +1,69 @@
 {% extends 'project/base.html' %}
+{% load static %}
 
 {% block content %}
-<html>
-<head>
-    <title>{{ object.title }}</title>
-</head>
-<body>
-    <h1>{{ object.title }}</h1>
-    <p><strong>Topic:</strong> {{ object.topic.title }}</p>
-    <p><strong>Content:</strong> {{ object.content }}</p>
-    <p><strong>Author:</strong> {{ object.author.username }}</p>
-    <a href="{% url 'note-list' %}">Back to Notes</a>
-</body>
-</html>
+<div class="note-detail-container">
+    <!-- Note Header -->
+    <div class="note-header">
+        <h1 class="note-title">{{ object.title }}</h1>
+        <div class="note-meta">
+            <div class="author-info">
+                {% if object.author.profile_img_file %}
+                    <img src="{{ object.author.profile_img_file.url }}" alt="Author Profile Picture" class="author-picture">
+                {% else %}
+                    <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Picture" class="author-picture">
+                {% endif %}
+                <div class="author-details">
+                    <p>By <a href="{% url 'profile-detail' object.author.id %}">{{ object.author.first_name }} {{ object.author.last_name }}</a></p>
+                    <p class="upload-date">Uploaded on {{ object.upload_date|date:"F j, Y, g:i a" }}</p>
+                </div>
+            </div>
+            <div class="note-tags">
+                <span class="tag">{{ object.topic.parent_subject.category.name }}</span>
+                <span class="tag">{{ object.topic.parent_subject.name }}</span>
+                <span class="tag">{{ object.topic.title }}</span>
+            </div>
+        </div>
+    </div>
+
+    <hr class="note-divider">
+
+    <!-- Note Content -->
+    <div class="note-content">
+        {{ object.content|linebreaks }}
+    </div>
+
+    <!-- View Similar Notes Button -->
+    <div class="similar-notes-section">
+        <button class="toggle-similar-notes-btn" onclick="toggleSimilarNotes()">
+            &#x25BC; View Similar Notes &#x25BC;
+        </button>
+        <div id="similar-notes-container" style="display: none;">
+            <!-- Similar Notes Content -->
+            {% for note in similar_notes %}
+                <div class="similar-note">
+                    <h4><a href="{% url 'note-detail' note.id %}">{{ note.title }}</a></h4>
+                    <p>{{ note.content|truncatechars:150 }}</p>
+                </div>
+            {% empty %}
+                <p>No similar notes found.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to Toggle Similar Notes -->
+<script>
+    function toggleSimilarNotes() {
+        const container = document.getElementById('similar-notes-container');
+        const button = document.querySelector('.toggle-similar-notes-btn');
+        if (container.style.display === 'none' || container.style.display === '') {
+            container.style.display = 'block';
+            button.innerHTML = '&#x25B2; Hide Similar Notes &#x25B2;';
+        } else {
+            container.style.display = 'none';
+            button.innerHTML = '&#x25BC; View Similar Notes &#x25BC;';
+        }
+    }
+</script>
 {% endblock %}

@@ -17,9 +17,30 @@
             <header>
                 <nav>
                     <ul>
-                        <li><a href="{% url 'home' %}">Home</a></li>
-                        <li><a href="{% url 'category-list' %}">Categories</a></li>
-                        <li><a href="{% url 'note-list' %}">Notes</a></li>
+                        
+                        {% if not request.user.is_authenticated and request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'logout' and request.resolver_match.url_name != 'create-profile' %}
+                            <li><a href="{% url 'login' %}">Login</a></li>
+                            <li><a href="{% url 'create-profile' %}">Create Profile</a></li>
+                        {% elif request.user.is_authenticated and request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'logout' %}
+                            <li><a href="{% url 'home' %}">Home</a></li>
+                            {% if request.resolver_match.url_name == 'profile-detail' %}
+                                {% if request.user.project_profile.id == profile.id %}
+                                    <li><a href="{% url 'update-profile' %}">Edit Profile</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'profile-detail' request.user.project_profile.id %}">View My Profile</a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><a href="{% url 'profile-detail' request.user.project_profile.id %}">View Your Profile</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'category-list' %}">Categories</a></li>
+                            <li><a href="{% url 'note-list' %}">Notes</a></li>
+                            <li><a href="{% url 'create-note' %}">Create Note</a></li>
+                        {% elif request.resolver_match.url_name != 'home' %}
+                            <li><a href="{% url 'home' %}">Back to Home</a></li>
+                        {% else %}
+                            <li><a href="{% url 'home' %}">Home</a></li>
+                        {% endif %}
+
                     </ul>
                 </nav>
             </header>
@@ -31,6 +52,29 @@
         </div>
 
         <footer>
+            {% if request.user.is_authenticated %}
+                <li style="display: inline-block; vertical-align: middle;">
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="
+                        padding: 10px 20px;
+                        background-color: #FF6F61; /* Soft red color */
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        text-decoration: none;
+                        transition: background-color 0.3s ease;
+                        display: inline-block;
+                        vertical-align: middle;
+                        height: 40px; /* Ensure consistent height */
+                        " onmouseover="this.style.backgroundColor='#E57373';"
+                        onmouseout="this.style.backgroundColor='#FF6F61';">
+                            <strong>Logout of {{ request.user.username }}</strong>
+                        </button>
+                    </form>
+                </li>
+            {% endif %}
             <p>&copy; 2024 Note Share (not real copyright)</p>
         </footer>
     </body>

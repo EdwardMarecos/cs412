@@ -1,0 +1,65 @@
+{% extends 'project/base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="note-form-container">
+        <!-- Left Section: Metadata Input Fields -->
+        <div class="note-form-left">
+            <!-- Profile Picture and Username -->
+            <div class="profile-info">
+                {% if user.project_profile.profile_img_file %}
+                    <img src="{{ user.project_profile.profile_img_file.url }}" alt="Profile Picture" class="profile-picture">
+                {% else %}
+                    <img src="{% static '/media/profile_images/default_pfp.jpg' %}" alt="Default Profile Picture" class="profile-picture">
+                {% endif %}
+                <p>Creating note as <strong>{{ user.username }}</strong></p>
+            </div>
+
+            <!-- Input Fields -->
+            <h2>Describe your note!</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label for="id_category">Category</label>
+                    {{ form.category }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="id_subject">Subject</label>
+                    {{ form.subject }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="id_topic">Topic</label>
+                    {{ form.topic }}
+                </div>
+        </div>
+
+        <!-- Right Section: Note Editor -->
+        <div class="note-form-right">
+            <div class="note-editor-container">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Title Field -->
+                    <div class="form-group mb-3">
+                        <input type="text" name="title" id="id_title" class="form-control title-input" 
+                            placeholder="Enter title here...">
+                    </div>
+
+                    <!-- Content Field -->
+                    <div class="form-group mb-3">
+                        <textarea name="content" id="id_content" class="form-control content-textarea" 
+                            placeholder="Start writing your note..."></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div>
+                        <button type="submit" class="btn btn-primary save-note-button">
+                            Save Note
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

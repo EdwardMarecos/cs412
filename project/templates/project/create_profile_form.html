@@ -1,0 +1,22 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="
+    max-width: 600px; 
+    padding: 30px; 
+    background-color: #f9f9f9; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    
+    <h2 class="text-center mb-4" style="color: #1976D2;">Create Your Profile</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary btn-block" style="
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;">Create Profile</button>
+    </form>
+</div>
+{% endblock %}

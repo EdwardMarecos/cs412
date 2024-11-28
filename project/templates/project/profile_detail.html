@@ -1,0 +1,34 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{{ profile.first_name }} {{ profile.last_name }}</h1>
+    <p><strong>Email:</strong> {{ profile.email_address }}</p>
+    <p><strong>Bio:</strong> {{ profile.bio }}</p>
+    <p><strong>Major:</strong> {{ profile.major }}</p>
+    <p><strong>Minor:</strong> {{ profile.minor }}</p>
+    <p><strong>School:</strong> {{ profile.school }}</p>
+    <p><strong>Class Year:</strong> {{ profile.class_year }}</p>
+    
+    {% if profile.profile_img_file %}
+        <img src="{{ profile.profile_img_file.url }}" alt="Profile Picture" class="img-fluid mt-3" style="max-width: 200px;">
+    {% endif %}
+
+    <hr>
+    <h2>Notes by {{ profile.first_name }}</h2>
+
+    {% if notes %}
+        <ul>
+            {% for note in notes %}
+                <li>
+                    <strong>{{ note.title }}</strong> - {{ note.upload_date|date:"F j, Y, g:i a" }}
+                    <p>{{ note.content|truncatechars:100 }}</p>
+                    <a href="{% url 'note-detail' note.id %}" class="btn btn-sm btn-primary">Read More</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No notes available.</p>
+    {% endif %}
+</div>
+{% endblock %}

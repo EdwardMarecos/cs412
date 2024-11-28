@@ -1,4 +1,4 @@
-## mini_fb/porms.py
+## mini_fb/forms.py
 ## description: forms for the mini_fb app
 
 from django import forms
