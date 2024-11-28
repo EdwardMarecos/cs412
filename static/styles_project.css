@@ -321,3 +321,116 @@ button:hover {
     margin: 0;
     font-size: 16px;
 }
+
+/* --------------------------------------------
+   Note Detail Page Styles
+-------------------------------------------- */
+
+.note-detail-container {
+    max-width: 900px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 40px 60px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    color: #2c2c2c;
+    position: relative;
+}
+
+/* Note Header */
+.note-detail-container .note-header {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.note-detail-container .note-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #2c2c2c;
+}
+
+.note-detail-container .note-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.note-detail-container .author-info {
+    display: flex;
+    align-items: center;
+}
+
+.note-detail-container .author-picture {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.note-detail-container .author-details p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.note-detail-container .author-details .upload-date {
+    color: gray;
+}
+
+.note-detail-container .author-details a {
+    color: #1976D2;
+    text-decoration: none;
+}
+
+.note-detail-container .author-details a:hover {
+    text-decoration: underline;
+}
+
+/* Note Tags */
+.note-detail-container .note-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.note-detail-container .tag {
+    background-color: #f0f0f0;
+    color: #2c2c2c;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Divider */
+.note-detail-container .note-divider {
+    margin: 30px 0;
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+/* Note Content */
+.note-detail-container .note-content {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #2c2c2c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .note-detail-container .note-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .note-detail-container .author-info {
+        margin-bottom: 20px;
+    }
+
+    .note-detail-container {
+        padding: 30px 20px;
+    }
+}
