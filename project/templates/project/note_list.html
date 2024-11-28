@@ -1,7 +1,8 @@
 {% extends 'project/base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="notes-page-container">
     <h2 class="mb-4">Notes</h2>
 
     <!-- Filter and Sort Form -->
@@ -33,8 +34,7 @@
             {% endfor %}
         </select>
 
-        <input type="text" name="author" placeholder="Filter by Author" class="form-control mr-2" value="{{ request.GET.author }}">
-
+        <input type="text" name="author" placeholder="Filter by Author" class="form-control mr-2" value="{{ get_params.author }}">
         <select name="sort" class="form-control mr-2">
             <option value="upload_date" {% if request.GET.sort == "upload_date" %}selected{% endif %}>Sort by Upload Date</option>
             <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>Sort by Title</option>
@@ -45,25 +45,41 @@
     </form>
 
     <!-- Notes Display -->
-    {% for note in page_obj %}
-        <div class="note-card" style="border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 5px;">
-            <h4>
-                <a href="{% url 'note-detail' note.id %}" style="color: #1976D2; text-decoration: none;">
-                    {{ note.title }}
-                </a>
-            </h4>
-            <p><strong>Author:</strong> 
-                <a href="{% url 'profile-detail' note.author.id %}">
-                    {{ note.author.user.username }}
-                </a>
-            </p>
-            <p><strong>Category:</strong> {{ note.topic.parent_subject.category.name }}</p>
-            <p><strong>Subject:</strong> {{ note.topic.parent_subject.name }}</p>
-            <p><strong>Topic:</strong> {{ note.topic.title }}</p>
-            <p><strong>Preview:</strong> {{ note.content|truncatechars:150 }}</p>
-            <p style="font-size: 12px; color: gray;">Uploaded: {{ note.upload_date|date:"F j, Y, g:i a" }}</p>
-        </div>
-    {% endfor %}
+    <div class="notes-grid">
+        {% for note in page_obj %}
+            <div class="note-card">
+                <div class="note-card-content">
+                    <h4 class="note-title">
+                        <a href="{% url 'note-detail' note.id %}">
+                            {{ note.title }}
+                        </a>
+                    </h4>
+                    <p class="note-author">
+                        <strong>Author:</strong>
+                        <a href="{% url 'profile-detail' note.author.id %}">
+                            {{ note.author.user.username}}
+                        </a>
+                    </p>
+                    <p class="note-preview">
+                        {{ note.content|truncatewords:30 }}
+                    </p>
+                </div>
+                <div class="note-card-footer">
+                    <p class="note-meta">
+                        <span>{{ note.topic.parent_subject.category.name }}</span> |
+                        <span>{{ note.topic.parent_subject.name }}</span> |
+                        <span>{{ note.topic.title }}</span>
+                    </p>
+                    <p class="note-date">
+                        Uploaded: {{ note.upload_date|date:"M d, Y" }} <br>
+                        {{ note.author.first_name }} {{ note.author.last_name }}
+                    </p>
+                </div>
+            </div>
+        {% empty %}
+            <p class="no-notes-message">No notes available.</p>
+        {% endfor %}
+    </div>
 
     <!-- Pagination Controls -->
     <div class="pagination">

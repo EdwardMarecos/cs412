@@ -60,7 +60,12 @@ class NoteListView(ListView):
         context['categories'] = Category.objects.all()
         context['subjects'] = Subject.objects.all()
         context['topics'] = Topic.objects.all()
-        context['get_params'] = self.request.GET  # Pass request.GET to template
+        context['get_params'] = self.request.GET.copy()
+
+        # Ensure 'author' is always set, even if missing
+        if 'author' not in context['get_params']:
+            context['get_params']['author'] = ''
+        
         return context
 
 class NoteDetailView(DetailView):
