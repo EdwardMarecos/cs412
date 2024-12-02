@@ -1,0 +1,68 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+<div class="confirm-delete-container">
+    <!-- Delete Confirmation Container -->
+    <div class="delete-container">
+        <h1 class="delete-title">Delete Note</h1>
+        <p class="delete-message">Are you sure you want to delete the note "<strong>{{ note.title }}</strong>"? This action cannot be undone.</p>
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger delete-button">Yes, Delete</button>
+            <a href="{% url 'note-detail' note.id %}" class="btn btn-secondary cancel-button">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<style>
+    .confirm-delete-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .delete-container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .delete-title {
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #d9534f;
+    }
+
+    .delete-message {
+        margin-bottom: 20px;
+        font-size: 16px;
+        color: #555;
+    }
+
+    .delete-button {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .delete-button:hover {
+        background-color: #c9302c;
+    }
+
+    .cancel-button {
+        margin-left: 10px;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+</style>
+{% endblock %}

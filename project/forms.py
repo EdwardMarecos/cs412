@@ -61,63 +61,32 @@ class UpdateProfileForm(forms.ModelForm):
         }
 
 class CreateNoteForm(forms.ModelForm):
-    """
-    Form to create a new Note with dynamic Category, Subject, and Topic selection.
-    """
-    category = forms.ModelChoiceField(
-        queryset=Category.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=True,
-    )
-    subject = forms.ModelChoiceField(
-        queryset=Subject.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=True,
-    )
-    topic = forms.ModelChoiceField(
-        queryset=Topic.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=True,
-    )
-
     class Meta:
         model = Note
-        fields = ['title', 'content', 'category', 'subject', 'topic']
+        fields = ['topic', 'title', 'content']
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'Enter note title', 'class': 'form-control'}),
-            'content': forms.Textarea(attrs={'placeholder': 'Write your note here...', 'class': 'form-control', 'rows': 20}),
+            'topic': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'title': forms.TextInput(attrs={
+                'class': 'form-control title-input',
+                'placeholder': 'Enter title here...',
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control content-textarea',
+                'placeholder': 'Start writing your note...',
+                'rows': 15,
+            }),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Handle pre-filtering for subject and topic if category/subject data exists
-        if 'category' in self.data:
-            try:
-                category_id = int(self.data.get('category'))
-                self.fields['subject'].queryset = Subject.objects.filter(category_id=category_id)
-            except (ValueError, TypeError):
-                pass
-        if 'subject' in self.data:
-            try:
-                subject_id = int(self.data.get('subject'))
-                self.fields['topic'].queryset = Topic.objects.filter(parent_subject_id=subject_id)
-            except (ValueError, TypeError):
-                pass
-        # Default empty queryset for filtered fields if no initial data is provided
-        self.fields['subject'].queryset = Subject.objects.all()
-        self.fields['topic'].queryset = Topic.objects.all()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Edit your comment...',
+            }),
+        }

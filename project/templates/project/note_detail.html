@@ -8,11 +8,7 @@
         <h1 class="note-title">{{ object.title }}</h1>
         <div class="note-meta">
             <div class="author-info">
-                {% if object.author.profile_img_file %}
-                    <img src="{{ object.author.profile_img_file.url }}" alt="Author Profile Picture" class="author-picture">
-                {% else %}
-                    <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Picture" class="author-picture">
-                {% endif %}
+                <img src="{{ object.author.get_pfp }}" alt="Author Profile Picture" class="author-picture">
                 <div class="author-details">
                     <p>By <a href="{% url 'profile-detail' object.author.id %}">{{ object.author.first_name }} {{ object.author.last_name }}</a></p>
                     <p class="upload-date">Uploaded on {{ object.upload_date|date:"F j, Y, g:i a" }}</p>
@@ -22,15 +18,88 @@
                 <a href="{% url 'note-list' %}?category={{ object.topic.parent_subject.category.id }}" class="tag">{{ object.topic.parent_subject.category.name }}</a>
                 <a href="{% url 'note-list' %}?subject={{ object.topic.parent_subject.id }}" class="tag">{{ object.topic.parent_subject.name }}</a>
                 <a href="{% url 'note-list' %}?topic={{ object.topic.id }}" class="tag">{{ object.topic.title }}</a>
-            </div>            
+            </div>
         </div>
     </div>
-
+  
     <hr class="note-divider">
 
     <!-- Note Content -->
     <div class="note-content">
         {{ object.content|linebreaks }}
     </div>
+
+    <div class="note-actions">
+        {% if note.author == request.user.project_profile %}
+            <a href="{% url 'note-update' note.id %}" class="btn btn-warning" style="color: #333333">Update</a>
+            <a href="{% url 'note-delete' note.id %}" class="btn btn-danger" style="color: #333333">Delete</a>
+        {% endif %}
+    </div>    
+
+    <div class="interaction-buttons">
+        <!-- Like Button -->
+        <form method="post" action="{% url 'toggle-like' object.id %}" class="like-form">
+            {% csrf_token %}
+            <button type="submit" 
+                    class="like-button {% if request.user.project_profile in object.liked_by.all %}liked{% endif %}">
+                <i class="fas fa-heart"></i>
+            </button>
+        </form>
+        <span class="like-count">{{ object.like_count }}</span>
+    
+        <!-- Bookmark Button -->
+        <form method="post" action="{% url 'toggle-bookmark' object.id %}" class="bookmark-form">
+            {% csrf_token %}
+            <button type="submit" 
+                    class="bookmark-button {% if request.user.project_profile in object.bookmarked_by.all %}bookmarked{% endif %}">
+                <i class="fas fa-bookmark"></i>
+            </button>
+        </form>
+        <span class="bookmark-count">{{ object.bookmark_count }}</span>
+    </div>
+    
+
 </div>
+
+<!-- Comments Section -->
+<div class="note note-detail-container" style="margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #f8f9fa;">
+    <h3 style="color: #333333;">Comments</h3>
+
+    <!-- Comment Form -->
+    <div class="comment-form" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #ffffff;">
+        <form method="post" action="{% url 'add-comment' note.id %}">
+            {% csrf_token %}
+            <div class="form-header" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 14px; color: #333333;">
+                <img src="{{ request.user.project_profile.get_pfp }}" alt="{{ request.user.project_profile.first_name }}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+                <span>Making comment as <strong>{{ request.user.project_profile.first_name }}</strong></span>
+            </div>
+            <div class="form-body" style="display: flex; flex-direction: column; gap: 10px;">
+                {{ comment_form.content }}
+                <button type="submit" class="btn btn-primary" style="align-self: flex-end;">Post</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="note-detail-container" style="margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #f8f9fa;">
+    <!-- Lazy Column for Comments -->
+    <div class="comments-lazy-column" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding: 10px 0;">
+        {% for comment in comments %}
+        <div class="comment" style="display: flex; gap: 15px; align-items: flex-start; padding: 10px; border-bottom: 1px solid #ddd;">
+            <img src="{{ comment.user.get_pfp }}" alt="{{ comment.user.first_name }}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+            <div class="comment-content" style="flex-grow: 1; font-size: 14px; line-height: 1.5;">
+                <p><strong>{{ comment.user.first_name }}</strong>: {{ comment.content }}</p>
+                {% if comment.user == request.user.project_profile %}
+                <a href="{% url 'edit-comment' comment.id %}" class="btn btn-secondary btn-sm" style="margin-right: 5px;">Edit</a>
+                <a href="{% url 'delete-comment' comment.id %}" class="btn btn-danger btn-sm">Delete</a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="no-comments-message" style="text-align: center; color: #888; font-style: italic;">No comments yet. Be the first to comment!</p>
+        {% endfor %}
+    </div>
+</div>
+
+
 {% endblock %}

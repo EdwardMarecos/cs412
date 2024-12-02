@@ -3,21 +3,39 @@
 {% block title %}Categories{% endblock %}
 
 {% block content %}
+<div class="categories-container">
     <h1>Categories</h1>
-    <ul>
+    
+    <!-- Display existing categories -->
+    <div class="categories-grid">
         {% for category in categories %}
-        <li>
-            <a href="{% url 'category-detail' category.pk %}">{{ category.name }}</a>
-            <br>
+        <div class="category-card">
             <img src="{{ category.graphic.url }}" 
-                alt="{{ category.name }}" 
-                style="
-                    width: 80px; 
-                    height: 80px; 
-                    border-radius: 15px; 
-                    object-fit: cover; 
-                    margin-bottom: 5px;">
-        </li>
+                 alt="{{ category.name }}" 
+                 class="category-image">
+            <h3>{{ category.name }}</h3>
+            <a href="{% url 'category-detail' category.pk %}" class="btn btn-primary">View Details</a>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+
+    <!-- Form for adding a new category -->
+    <div class="add-category-form">
+        <h2>Can't Find What You Need?</h2>
+        <p>If you don’t see the category, subject, or topic you’re looking for, submit it below:</p>
+
+        <form method="post" action="{% url 'add-category' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <label for="name">Category Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="graphic">Category Graphic:</label>
+                <input type="file" id="graphic" name="graphic" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

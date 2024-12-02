@@ -1,0 +1,17 @@
+{% extends 'project/base.html' %}
+
+{% block title %}Add Topic{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Add a New Topic to "{{ subject.name }}"</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_title">Topic Title</label>
+            <input type="text" id="id_title" name="title" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Topic</button>
+    </form>
+</div>
+{% endblock %}

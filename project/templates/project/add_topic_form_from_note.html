@@ -1,0 +1,24 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+<div class="topic-form-wrapper-topic">
+    <div class="topic-form-container-topic">
+        <h1 class="topic-form-title-topic">Create a New Topic</h1>
+        <p class="topic-form-description-topic">Fill out the details below to add a new topic to your project.</p>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="topic-form-group-topic">
+                <label for="id_title" class="topic-label-topic">Topic Title</label>
+                <input type="text" name="title" id="id_title" class="topic-input-topic" placeholder="Enter topic title" required>
+            </div>
+            <div class="topic-form-group-topic">
+                <label for="id_parent_subject" class="topic-label-topic">Parent Subject</label>
+                {{ form.parent_subject }}
+            </div>
+            <button type="submit" class="topic-btn-primary-topic">Create Topic</button>
+            <a href="{% url 'category-list' %}" class="topic-btn-secondary-topic">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+<div class="followers-container">
+    <h2>Followers</h2>
+    {% if followers %}
+        <div class="followers-grid">
+            {% for profile in followers %}
+                <div class="follower-card">
+                    <div class="follower-picture-container">
+                        {% if profile.profile_img_file %}
+                            <img src="{{ profile.profile_img_file.url }}" alt="Profile Picture" class="follower-picture">
+                        {% else %}
+                            <div class="default-follower-picture"></div>
+                        {% endif %}
+                    </div>
+                    <div class="follower-details">
+                        <h3><a href="{% url 'profile-detail' profile.id %}">{{ profile.first_name }} {{ profile.last_name }}</a></h3>
+                        <p>{{ profile.bio|default:"No bio available." }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-followers-message">You don't have any followers yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

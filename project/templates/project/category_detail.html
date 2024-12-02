@@ -1,19 +1,126 @@
 {% extends 'project/base.html' %}
 
+{% block title %}{{ category.name }}{% endblock %}
+
 {% block content %}
-<div>
-    <head>
-        <title>{{ object.name }}</title>
-    </head>
-    <body>
-        <h1>{{ object.name }}</h1>
-        <h2>Subjects</h2>
-        <ul>
-            {% for subject in object.subjects.all %}
-                <li>{{ subject.name }}</li>
+<div class="category-detail-container">
+    <h1>{{ category.name }}</h1>
+
+    <!-- Tabs Section -->
+    <div class="category-tabs">
+        <button class="tab-button active" onclick="showSection('all-notes-section')">All Notes</button>
+        {% for subject in subjects %}
+        <button class="tab-button" onclick="showSection('subject-{{ subject.id }}-section')">{{ subject.name }}</button>
+        {% endfor %}
+        <button class="tab-button" onclick="showSection('add-subject-section')">Add Subject</button>
+        <button class="tab-button" onclick="showSection('add-topic-section')">Add Topic</button>
+    </div>
+
+    <!-- All Notes Section -->
+    <div id="all-notes-section" class="category-content-section active">
+        <h2>All Notes</h2>
+        {% if all_notes %}
+            <div class="notes-grid">
+                {% for note in all_notes %}
+                <div class="note-card">
+                    <h3 class="note-title">{{ note.title }}</h3>
+                    <p class="note-meta">Uploaded: {{ note.upload_date|date:"M d, Y" }}</p>
+                    <p class="note-preview">{{ note.content|truncatechars:100 }}</p>
+                    <a href="{% url 'note-detail' note.id %}" class="btn btn-primary">Read More</a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No notes available for this category.</p>
+        {% endif %}
+    </div>
+
+    <!-- Notes by Subject Sections -->
+    {% for subject, notes in notes_by_subject.items %}
+    <div id="subject-{{ subject.id }}-section" class="category-content-section">
+        <h2>{{ subject.name }}</h2>
+        
+        <!-- Show Topics Under Each Subject -->
+        {% if subject.topic_set.exists %}
+        <h3>Available Topics:</h3>
+        <ul class="topic-list">
+            {% for topic in subject.topic_set.all %}
+            <li><strong>{{ topic.title }}</strong></li>
             {% endfor %}
         </ul>
-        <a href="{% url 'category-list' %}">Back to Categories</a>
-    </body>
+        {% else %}
+        <p>No topics available for this subject.</p>
+        {% endif %}
+        
+        <!-- Notes Under the Subject -->
+        {% if notes %}
+            <h3>All Notes:</h3>
+            <div class="notes-grid">
+                {% for note in notes %}
+                <div class="note-card">
+                    <h3 class="note-title">{{ note.title }}</h3>
+                    <p class="note-meta">Uploaded: {{ note.upload_date|date:"M d, Y" }}</p>
+                    <p class="note-preview">{{ note.content|truncatechars:100 }}</p>
+                    <a href="{% url 'note-detail' note.id %}" class="btn btn-primary">Read More</a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No notes available for this subject.</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+
+    <!-- Add Subject Section -->
+    <div id="add-subject-section" class="category-content-section">
+        <h2>Add a New Subject</h2>
+        <form method="post" action="{% url 'add-subject' category.id %}">
+            {% csrf_token %}
+            <div>
+                <label for="subject-name">Subject Name:</label>
+                <input type="text" id="subject-name" name="name" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Subject</button>
+        </form>
+    </div>
+
+    <!-- Add Topic Section -->
+    <div id="add-topic-section" class="category-content-section">
+        <h2>Add a New Topic</h2>
+        <form method="post" action="{% url 'add-topic' category.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="topic-name">Topic Name:</label>
+                <input type="text" id="topic-name" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="parent-subject">Parent Subject:</label>
+                <select id="parent-subject" name="parent_subject" class="form-control" required>
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}">{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Topic</button>
+        </form>
+    </div>
+
+
+    <a href="{% url 'category-list' %}" class="btn btn-secondary">Back to Categories</a>
 </div>
+
+<script>
+    function showSection(sectionId) {
+        document.querySelectorAll('.category-content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.querySelector(`#${sectionId}`).classList.add('active');
+
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
+        document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
+    }
+</script>
 {% endblock %}

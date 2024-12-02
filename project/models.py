@@ -7,6 +7,7 @@ from django.utils.timezone import now
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='project_profile')
+    followers = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
 
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -17,6 +18,21 @@ class Profile(models.Model):
     minor = models.CharField(max_length=100, blank=True)
     school = models.CharField(max_length=100)
     class_year = models.IntegerField(null=True, blank=True)  # Allow null and blank values
+
+    def get_pfp(self):
+        """Return the uploaded image if it exists, otherwise return the URL."""
+        if self.profile_img_file and hasattr(self.profile_img_file, 'url'):
+            return self.profile_img_file.url  # Use the uploaded image
+        else:
+            return '/media/profile_images/default_pfp.jpg'  # No image provided
+
+    def is_following(self, profile):
+        """Check if this profile is following another profile."""
+        return profile in self.following.all()
+
+    def is_followed_by(self, profile):
+        """Check if this profile is followed by another profile."""
+        return profile in self.followers.all()
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}'s Profile"
@@ -53,8 +69,34 @@ class Note(models.Model):
     bookmark_count = models.PositiveIntegerField(default=0)
     copy_count = models.PositiveIntegerField(default=0)
 
+    # New ManyToManyField to track likes and bookmarks
+    liked_by = models.ManyToManyField(Profile, related_name="liked_notes", blank=True)
+    bookmarked_by = models.ManyToManyField(Profile, related_name="bookmarked_notes", blank=True)
+
+    def like(self, profile):
+        self.liked_by.add(profile)
+        self.like_count = self.liked_by.count()
+        self.save()
+
+    def unlike(self, profile):
+        self.liked_by.remove(profile)
+        self.like_count = self.liked_by.count()
+        self.save()
+
+    def bookmark(self, profile):
+        """Adds a bookmark from a profile."""
+        self.bookmarked_by.add(profile)
+        self.bookmark_count = self.bookmarked_by.count()
+        self.save()
+
+    def unbookmark(self, profile):
+        """Removes a bookmark from a profile."""
+        self.bookmarked_by.remove(profile)
+        self.bookmark_count = self.bookmarked_by.count()
+        self.save()
+
     def __str__(self):
-        return f"{self.title} by {self.author.username} (Topic: {self.topic.title}, Subject: {self.topic.parent_subject.name})"
+        return f"{self.title} by {self.author.user.username} (Likes: {self.like_count}, Bookmarks: {self.bookmark_count})"
 
 class Comment(models.Model):
     content = models.TextField()

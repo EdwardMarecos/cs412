@@ -1,34 +1,114 @@
 {% extends 'project/base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1>{{ profile.first_name }} {{ profile.last_name }}</h1>
-    <p><strong>Email:</strong> {{ profile.email_address }}</p>
-    <p><strong>Bio:</strong> {{ profile.bio }}</p>
-    <p><strong>Major:</strong> {{ profile.major }}</p>
-    <p><strong>Minor:</strong> {{ profile.minor }}</p>
-    <p><strong>School:</strong> {{ profile.school }}</p>
-    <p><strong>Class Year:</strong> {{ profile.class_year }}</p>
-    
-    {% if profile.profile_img_file %}
-        <img src="{{ profile.profile_img_file.url }}" alt="Profile Picture" class="img-fluid mt-3" style="max-width: 200px;">
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <!-- Profile Picture -->
+        <div class="profile-picture-onpage-container">
+            <img src="{{ profile.get_pfp }}" alt="Profile Picture" class="profile-picture-onpage">
+        </div>
+
+        <!-- Profile Details and Analytics -->
+        <div class="profile-info">
+            <!-- Profile Details -->
+            <div class="profile-details">
+                <h1 class="profile-name">{{ profile.first_name }} {{ profile.last_name }}</h1>
+                <p><strong>Email:</strong> {{ profile.email_address }}</p>
+                <p><strong>Bio:</strong> {{ profile.bio|default:"No bio provided." }}</p>
+                <p><strong>Major:</strong> {{ profile.major|default:"N/A" }}</p>
+                {% if profile.minor %}
+                    <p><strong>Minor:</strong> {{ profile.minor }}</p>
+                {% endif %}
+                <p><strong>School:</strong> {{ profile.school }}</p>
+                <p><strong>Class Year:</strong> {{ profile.class_year|default:"N/A" }}</p>
+            </div>
+
+            <!-- Analytics -->
+            <div class="profile-analytics">
+                <h2>Analytics</h2>
+                <p><strong>Followers:</strong> <a href="{% url 'followers-list' profile.id %}">{{ followers_count }}</a></p>
+                <p><strong>Following:</strong> <a href="{% url 'following-list' profile.id %}">{{ following_count }}</a></p>
+                <p><strong>Liked Notes:</strong> {{ liked_notes_count }}</p>
+                <p><strong>Written Notes:</strong> {{ notes_count }}</p>
+                <p><strong>Bookmarked Notes:</strong> {{ bookmarked_notes_count }}</p>
+                <p><strong>Total Likes Received:</strong> {{ total_likes_received }}</p>
+                <br>
+                {% if request.user.project_profile != profile %}
+                    <form method="post" action="{% url 'follow-profile' profile.id %}">
+                        {% csrf_token %}
+                        {% if profile in request.user.project_profile.following.all %}
+                            <button type="submit" class="btn btn-secondary">Unfollow</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary">Follow</button>
+                        {% endif %}
+                    </form>
+                {% endif %}
+            </div>            
+        </div>
+    </div>
+
+    <hr class="profile-divider">
+
+    <!-- Tabs Section -->
+    {% if request.user.project_profile == profile %}
+        <div class="profile-tabs">
+            <button class="tab-button active" onclick="showSection('notes-section')">Your Notes</button>
+            <button class="tab-button" onclick="showSection('bookmarks-section')">Your Bookmarks</button>
+        </div>
     {% endif %}
 
-    <hr>
-    <h2>Notes by {{ profile.first_name }}</h2>
+    <!-- Notes Section -->
+    <div id="notes-section" class="profile-content-section active">
+        <h2>Notes by {{ profile.first_name }}</h2>
+        {% if notes %}
+            <div class="notes-grid">
+                {% for note in notes %}
+                    <div class="note-card">
+                        <h3 class="note-title">{{ note.title }}</h3>
+                        <p class="note-meta">Uploaded: {{ note.upload_date|date:"M d, Y" }}</p>
+                        <p class="note-preview">{{ note.content|truncatechars:100 }}</p>
+                        <a href="{% url 'note-detail' note.id %}" class="btn btn-primary">Read More</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-notes-message">No notes available.</p>
+        {% endif %}
+    </div>
 
-    {% if notes %}
-        <ul>
-            {% for note in notes %}
-                <li>
-                    <strong>{{ note.title }}</strong> - {{ note.upload_date|date:"F j, Y, g:i a" }}
-                    <p>{{ note.content|truncatechars:100 }}</p>
-                    <a href="{% url 'note-detail' note.id %}" class="btn btn-sm btn-primary">Read More</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No notes available.</p>
-    {% endif %}
+    <!-- Bookmarks Section -->
+    <div id="bookmarks-section" class="profile-content-section">
+        <h2>Your Bookmarks</h2>
+        {% if bookmarks %}
+            <div class="notes-grid">
+                {% for note in bookmarks %}
+                    <div class="note-card">
+                        <h3 class="note-title">{{ note.title }}</h3>
+                        <p class="note-meta">Uploaded: {{ note.upload_date|date:"M d, Y" }}</p>
+                        <p class="note-preview">{{ note.content|truncatechars:100 }}</p>
+                        <a href="{% url 'note-detail' note.id %}" class="btn btn-primary">Read More</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-notes-message">No bookmarks available.</p>
+        {% endif %}
+    </div>
 </div>
+
+<script>
+    function showSection(sectionId) {
+        document.querySelectorAll('.profile-content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.querySelector(`#${sectionId}`).classList.add('active');
+
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
+        document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
+    }
+</script>
+
 {% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+<!-- Edit Comment Form -->
+<div class="edit-comment-container" style="margin: 20px auto; padding: 20px; max-width: 600px; border: 1px solid #ddd; border-radius: 8px; background-color: #f8f9fa;">
+    <h2 style="margin-bottom: 20px; text-align: center; color: #333;">Edit Comment</h2>
+    <form method="post" action="{% url 'edit-comment' comment.id %}">
+        {% csrf_token %}
+        <div style="margin-bottom: 15px;">
+            <label for="id_content" style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Edit your comment:</label>
+            {{ form.content }}
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button type="submit" class="btn btn-primary" style="width: auto; padding: 8px 16px; font-size: 14px;">Save Changes</button>
+            <a href="{% url 'note-detail' comment.note.id %}" class="btn btn-secondary" style="width: auto; padding: 8px 16px; font-size: 14px; text-align: center;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

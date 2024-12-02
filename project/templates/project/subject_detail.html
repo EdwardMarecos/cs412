@@ -1,0 +1,24 @@
+{% extends 'project/base.html' %}
+
+{% block title %}{{ subject.name }}{% endblock %}
+
+{% block content %}
+<div class="subject-detail-container">
+    <h1>{{ subject.name }}</h1>
+
+    <h2>Topics</h2>
+    <ul>
+        {% for topic in topics %}
+        <li>
+            <a href="{% url 'topic-detail' topic.id %}">{{ topic.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if not topics %}
+    <p>No topics available for this subject.</p>
+    {% endif %}
+
+    <a href="{% url 'add-topic' subject.category.id %}" class="btn btn-primary add-button">Add Topic</a>
+    <a href="{% url 'category-detail' subject.category.id %}" class="btn btn-secondary">Back to Category</a>
+</div>
+{% endblock %}

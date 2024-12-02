@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="notes-page-container">
+<div class="notes-page-container-a">
     <h2 class="mb-4">Notes</h2>
 
     <!-- Filter and Sort Form -->
@@ -45,33 +45,43 @@
     </form>
 
     <!-- Notes Display -->
-    <div class="notes-grid">
+    <div class="notes-grid-a">
         {% for note in page_obj %}
-            <div class="note-card">
-                <div class="note-card-content">
-                    <h4 class="note-title">
+            <div class="note-card-a">
+                <div class="interaction-display-a">
+                    <!-- Like Display -->
+                    <div class="like-display-a {% if request.user.project_profile in note.liked_by.all %}liked{% endif %}">
+                        <i class="fas fa-heart"></i>
+                        <span class="like-count-a">{{ note.like_count }}</span>
+                    </div>
+                    <!-- Bookmark Display -->
+                    <div class="bookmark-display-a {% if request.user.project_profile in note.bookmarked_by.all %}bookmarked{% endif %}">
+                        <i class="fas fa-bookmark"></i>
+                        <span class="bookmark-count-a">{{ note.bookmark_count }}</span>
+                    </div>
+                </div>
+                <div class="note-card-content-a">
+                    <h4 class="note-title-a">
                         <a href="{% url 'note-detail' note.id %}">
                             {{ note.title }}
                         </a>
                     </h4>
-                    <p class="note-author">
+                    <p class="note-author-a">
                         <strong>Author:</strong>
-                        <a href="{% url 'profile-detail' note.author.id %}">
-                            {{ note.author.user.username}}
-                        </a>
+                        <a href="{% url 'profile-detail' note.author.id %}">{{ note.author.user.username }}</a>
                     </p>
-                    <p class="note-preview">
+                    <p class="note-preview-a">
                         {{ note.content|truncatewords:30 }}
                     </p>
                 </div>
-                <div class="note-card-footer">
-                    <p class="note-meta">
+                <div class="note-card-footer-a">
+                    <p class="note-meta-a">
                         <span>{{ note.topic.parent_subject.category.name }}</span> |
                         <span>{{ note.topic.parent_subject.name }}</span> |
                         <span>{{ note.topic.title }}</span>
                     </p>
-                    <p class="note-date">
-                        Uploaded: {{ note.upload_date|date:"M d, Y" }} <br>
+                    <p class="note-date-a">
+                        Uploaded: {{ note.upload_date|date:"M d, Y" }}<br>
                         {{ note.author.first_name }} {{ note.author.last_name }}
                     </p>
                 </div>
@@ -80,16 +90,17 @@
             <p class="no-notes-message">No notes available.</p>
         {% endfor %}
     </div>
+    
 
     <!-- Pagination Controls -->
-    <div class="pagination">
-        <span class="step-links">
+    <div class="pagination-a">
+        <span class="step-links-a">
             {% if page_obj.has_previous %}
                 <a href="?page=1">&laquo; first</a>
                 <a href="?page={{ page_obj.previous_page_number }}">previous</a>
             {% endif %}
 
-            <span class="current">
+            <span class="current-a">
                 Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
             </span>
 

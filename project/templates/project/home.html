@@ -1,28 +1,87 @@
 {% extends 'project/base.html' %}
 
-
 {% block title %}Home{% endblock %}
 
-
 {% block content %}
-{% if request.user.is_authenticated%}
+    <div class="home-container">
+        <h1>Welcome to Notes App</h1>
 
-    <div>
-        <h1>Welcome to My Project</h1>
-        <p>Select an option to get started:</p>
-        <br>
-        <p>no options yet :3</p>
+        {% if request.user.is_authenticated %}
+            <div class="home-content">
+                <!-- Main Feed -->
+                <div class="feed">
+                    <h2>Top Performing Notes</h2>
+                    <div class="feed-categories">
+                        <button class="category-button active" onclick="showCategory('all')">All</button>
+                        {% for category in categories %}
+                            <button class="category-button" onclick="showCategory('category-{{ category.id }}')">{{ category.name }}</button>
+                        {% endfor %}
+                    </div>
+
+                    <div class="feed-notes">
+                        {% for note in notes %}
+                            <div class="note-card category-{{ note.topic.parent_subject.category.id }}">
+                                <h3 class="note-title">{{ note.title }}</h3>
+                                <p class="note-meta">Uploaded: {{ note.upload_date|date:"M d, Y" }}</p>
+                                <p class="note-preview">{{ note.content|truncatechars:100 }}</p>
+                                <a href="{% url 'note-detail' note.id %}" class="btn btn-primary">Read More</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- user feed -->
+                <div class="user-feed">
+                    <h2>Discover Users</h2>
+                    {% if users %}
+                        <div class="user-cards">
+                            {% for user in users %}
+                                <div class="user-card">
+                                    <div class="user-picture-container">
+                                        <img src="{{ user.get_pfp }}" alt="Profile Picture" class="user-picture">
+                                    </div>
+                                    <div class="user-details">
+                                        <h3><a href="{% url 'profile-detail' user.id %}">{{ user.first_name }} {{ user.last_name }}</a></h3>
+                                        <p>{{ user.bio|truncatechars:50|default:"No bio available." }}</p>
+                                    </div>
+                                    <form method="post" action="{% url 'follow-profile' user.id %}">
+                                        {% csrf_token %}
+                                        {% if user.is_followed %}
+                                            <button type="submit" class="btn btn-secondary">Unfollow</button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-primary">Follow</button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="no-users-message">No users to display right now.</p>
+                    {% endif %}
+                </div>                
+
+            </div>
+        {% else %}
+            <div class="guest-message">
+                <p>Login to see top notes and connect with other users!</p>
+            </div>
+        {% endif %}
     </div>
 
-    {% else %}
+    <script>
+        function showCategory(categoryId) {
+            document.querySelectorAll('.note-card').forEach(card => {
+                if (categoryId === 'all' || card.classList.contains(categoryId)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
 
-    <div>
-        <h1>Welcome to My Project</h1>
-        <p>Login to get started:</p>
-        <br>
-        <p>no options yet :3</p>
-    </div>
-
-{% endif %}
-
+            document.querySelectorAll('.category-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.querySelector(`[onclick="showCategory('${categoryId}')"]`).classList.add('active');
+        }
+    </script>
 {% endblock %}
