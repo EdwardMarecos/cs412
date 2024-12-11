@@ -3,6 +3,7 @@ from django.shortcuts import *
 from django.views.generic import *
 from .models import *
 
+from django.contrib.auth import login
 from django.utils import timezone
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -257,15 +258,85 @@ class ToggleBookmarkView(LoginRequiredMixin, View):
 # profile creation / display / update views
 
 class CreateProfileView(CreateView):
+    """
+    View to handle both user registration and profile creation.
+    """
     model = Profile
     form_class = CreateProfileForm
     template_name = 'project/create_profile_form.html'
-    success_url = reverse_lazy('home')  # Redirect to the home page upon success
+    success_url = reverse_lazy('home')  # Redirect to home after successful registration
 
-    def form_valid(self, form):
-        # Link the profile to the logged-in user
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        """
+        Add the UserCreationForm to the context.
+        """
+        context = super().get_context_data(**kwargs)
+        if 'user_form' not in context:
+            context['user_form'] = UserCreationForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST request with both UserCreationForm and CreateProfileForm.
+        """
+        self.object = None
+        user_form = UserCreationForm(self.request.POST)
+        profile_form = self.get_form()
+
+        if user_form.is_valid() and profile_form.is_valid():
+            return self.form_valid(user_form, profile_form)
+        else:
+            return self.form_invalid(user_form, profile_form)
+
+    def form_valid(self, user_form, profile_form):
+        """
+        If both forms are valid, save the user and profile.
+        """
+        # Save the user
+        user = user_form.save()
+        user.email = profile_form.cleaned_data.get('email_address')
+        user.first_name = profile_form.cleaned_data.get('first_name')
+        user.last_name = profile_form.cleaned_data.get('last_name')
+        user.save()
+
+        # Save the profile
+        profile = profile_form.save(commit=False)
+        profile.user = user
+
+        # Handle profile image logic
+        profile_image_url = profile_form.cleaned_data.get('profile_image_url')
+        profile_img_file = self.request.FILES.get('profile_img_file')
+
+        if profile_image_url:
+            profile.profile_img_url = profile_image_url
+        elif profile_img_file:
+            profile.profile_img_file = profile_img_file
+        else:
+            profile.profile_img_url = '/media/profile_images/default_pfp.jpg'
+
+        profile.save()
+
+        # Log in the user
+        login(self.request, user)
+
+        return super().form_valid(profile_form)
+
+    def form_invalid(self, user_form, profile_form):
+        """
+        If the forms are invalid, re-render the page with errors.
+        """
+        return self.render_to_response(
+            self.get_context_data(
+                form=profile_form,
+                user_form=user_form
+            )
+        )
+
+    def get_success_url(self):
+        """
+        Redirect to the home page or any other page after successful registration.
+        """
+        return reverse('home')
 
 class ProfileDetailView(DetailView):
     model = Profile

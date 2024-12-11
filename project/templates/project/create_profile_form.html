@@ -3,20 +3,34 @@
 {% block content %}
 <div class="container mt-5" style="
     max-width: 600px; 
-    padding: 30px; 
-    background-color: #f9f9f9; 
-    border-radius: 15px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+    font-family: Arial, sans-serif;">
     
-    <h2 class="text-center mb-4" style="color: #1976D2;">Create Your Profile</h2>
+    <h2 class="text-center mb-4" style="color: #333;">Create Your Account & Profile</h2>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" style="color: #333;">
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        <!-- User Creation Form -->
+        <div>
+            {{ user_form.as_p }}
+        </div>
+        
+        <!-- Profile Creation Form -->
+        <div>
+            {{ form.as_p }}
+        </div>
+        
         <button type="submit" class="btn btn-primary btn-block" style="
             padding: 10px 20px;
             font-size: 16px;
-            font-weight: bold;">Create Profile</button>
+            font-weight: bold;
+            background-color: #333;">Create Profile</button>
     </form>
 </div>
 {% endblock %}
