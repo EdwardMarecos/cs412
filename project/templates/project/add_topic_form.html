@@ -1,16 +1,27 @@
+<!-- File: add_topic_form.html -->
+<!-- Author: Edward Marecos (emarecos@bu.edu), 12/1/2024 -->
+<!-- Description: Template for the 'Add Topic' page. This page allows users to create a new topic within a specific subject. -->
+
 {% extends 'project/base.html' %}
 
 {% block title %}Add Topic{% endblock %}
 
 {% block content %}
 <div class="form-container">
+    <!-- Header for adding a new topic -->
     <h1>Add a New Topic to "{{ subject.name }}"</h1>
+    
+    <!-- Form for adding a new topic -->
     <form method="post">
-        {% csrf_token %}
+        {% csrf_token %}  <!-- CSRF token for security -->
+        
+        <!-- Form group for topic title input -->
         <div class="form-group">
             <label for="id_title">Topic Title</label>
-            <input type="text" id="id_title" name="title" required>
+            <input type="text" id="id_title" name="title" required> <!-- Input for the topic title -->
         </div>
+        
+        <!-- Submit button to add the topic -->
         <button type="submit" class="btn btn-primary">Add Topic</button>
     </form>
 </div>

@@ -1,21 +1,35 @@
+<!-- File: add_topic_form_from_note.html -->
+<!-- Author: Edward Marecos (emarecos@bu.edu), 12/1/2024 -->
+<!-- Description: Template for the 'Add Topic from Note' page. This page allows users to create a new topic for a specific subject. -->
+
 {% extends 'project/base.html' %}
 
 {% block content %}
 <div class="topic-form-wrapper-topic">
+    <!-- Container for the topic form -->
     <div class="topic-form-container-topic">
+        
+        <!-- Header for the topic form -->
         <h1 class="topic-form-title-topic">Create a New Topic</h1>
         <p class="topic-form-description-topic">Fill out the details below to add a new topic to your project.</p>
         
+        <!-- Form to submit a new topic -->
         <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+            {% csrf_token %}  <!-- CSRF token for security -->
+            
+            <!-- Input group for topic title -->
             <div class="topic-form-group-topic">
                 <label for="id_title" class="topic-label-topic">Topic Title</label>
                 <input type="text" name="title" id="id_title" class="topic-input-topic" placeholder="Enter topic title" required>
             </div>
+            
+            <!-- Dropdown for selecting the parent subject -->
             <div class="topic-form-group-topic">
                 <label for="id_parent_subject" class="topic-label-topic">Parent Subject</label>
-                {{ form.parent_subject }}
+                {{ form.parent_subject }}  <!-- Form field for parent subject -->
             </div>
+            
+            <!-- Buttons to submit or cancel the topic creation -->
             <button type="submit" class="topic-btn-primary-topic">Create Topic</button>
             <a href="{% url 'category-list' %}" class="topic-btn-secondary-topic">Cancel</a>
         </form>

@@ -1,13 +1,22 @@
+<!-- File: add_category_form.html -->
+<!-- Author: Edward Marecos (emarecos@bu.edu), 12/1/2024 -->
+<!-- Description: Template for the 'Add Category' page. This page allows users to add new categories via a form submission. -->
+
 {% extends 'project/base.html' %}
 
 {% block title %}Add Category{% endblock %}
 
 {% block content %}
 <div class="add-category-container">
+    <!-- Page header for adding a new category -->
     <h1>Add a New Category</h1>
+    
+    <!-- Form to submit a new category -->
     <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
+        {% csrf_token %}  <!-- CSRF token for security -->
+        {{ form.as_p }}  <!-- Render the form fields as paragraph elements -->
+        
+        <!-- Submit button to add the category -->
         <button type="submit" class="btn btn-primary">Add Category</button>
     </form>
 </div>

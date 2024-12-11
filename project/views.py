@@ -1,46 +1,57 @@
-from django.http import *
-from django.shortcuts import *
-from django.views.generic import *
-from .models import *
+# File: views.py
+# Author: Edward Marecos (emarecos@bu.edu), 12/1/2024
+# Description: Contains all the view classes for the project app. These classes handle the logic for displaying pages, processing forms, and managing interactions like likes, bookmarks, comments, and profile views.
 
-from django.contrib.auth import login
-from django.utils import timezone
-from django.urls import reverse, reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.forms import UserCreationForm
-from .forms import *
+from django.http import *  # Importing all HTTP-related utilities from Django
+from django.shortcuts import *  # Importing all shortcut utilities from Django
+from django.views.generic import *  # Importing generic views from Django
+from .models import *  # Importing all models from the local app
+
+from django.contrib.auth import login  # Used to log in the user after successful registration
+from django.utils import timezone  # Used for handling date and time-related operations
+from django.urls import reverse, reverse_lazy  # Used to reverse-resolve URLs dynamically
+from django.contrib.auth.mixins import LoginRequiredMixin  # Ensures users are logged in for certain views
+from django.contrib.auth.forms import UserCreationForm  # Built-in user registration form from Django
+from .forms import *  # Importing all custom forms from the my app
 
 # display main page
 
 class HomeView(TemplateView):
+    """Display the main page of the app."""
     template_name = 'project/home.html'
 
     def get_context_data(self, **kwargs):
+        """Return context data for the home view, including top notes and suggested users to follow."""
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            current_profile = self.request.user.project_profile
-            context['notes'] = Note.objects.order_by('-like_count')[:10]  # Top 10 notes by likes
-            all_users = Profile.objects.exclude(user=self.request.user)
-            # Add an attribute `is_followed` to each user for the template
+            current_profile = self.request.user.project_profile  # Profile of the current logged-in user
+            context['notes'] = Note.objects.order_by('-like_count')[:10]  # Top 10 notes ordered by likes
+            all_users = Profile.objects.exclude(user=self.request.user)  # All profiles except the current user's profile
+
             for user in all_users:
+                # Check if the current user follows this user
                 user.is_followed = current_profile.following.filter(id=user.id).exists()
-            context['users'] = all_users
-            context['categories'] = Category.objects.all()
+
+            context['users'] = all_users  # Add the list of users to context
+            context['categories'] = Category.objects.all()  # Add all categories to context
         return context
 
 
 # relevant views for categories
 class CategoryListView(ListView):
+    """Display a list of all categories."""
     model = Category
     template_name = 'project/category_list.html'
     context_object_name = 'categories'
 
 class CategoryDetailView(DetailView):
+    """Display details for a specific category, including its subjects and notes."""
     model = Category
     template_name = 'project/category_detail.html'
     context_object_name = 'category'
 
     def get_context_data(self, **kwargs):
+        """Return context data for the category detail view."""
         context = super().get_context_data(**kwargs)
         category = self.get_object()
         # All subjects related to this category
@@ -55,31 +66,35 @@ class CategoryDetailView(DetailView):
         return context
 
 class AddCategoryView(LoginRequiredMixin, CreateView):
+    """View to create a new category. Restricted to logged-in users."""
     model = Category
-    fields = ['name', 'graphic']
+    fields = ['name', 'graphic']     # Fields required to create a category
     template_name = 'project/add_category_form.html'
     success_url = reverse_lazy('category-list')  # Redirect to the category list after adding a category
 
     def form_valid(self, form):
-        # Optionally, you can add custom logic here before saving the category
         return super().form_valid(form)
 
     
 # subjects
 class SubjectCreateView(LoginRequiredMixin, CreateView):
+    """View to create a new subject within a specific category."""
     model = Subject
     fields = ['name']
     template_name = 'project/add_subject_form.html'
 
     def form_valid(self, form):
+        """Set the category for the subject based on the URL parameter."""
         category = get_object_or_404(Category, id=self.kwargs['category_id'])
         form.instance.category = category
         return super().form_valid(form)
 
     def get_success_url(self):
+        """Redirect to the detail page for the associated category."""
         return reverse_lazy('category-detail', kwargs={'pk': self.kwargs['category_id']})
     
 class SubjectListView(ListView):
+    """Display a list of subjects."""
     model = Subject
     template_name = 'project/subject_list.html'
     context_object_name = 'subjects'
@@ -90,6 +105,7 @@ class SubjectListView(ListView):
     
 # topics
 class TopicCreateView(LoginRequiredMixin, CreateView):
+    """ create a topic """
     model = Topic
     fields = ['title', 'parent_subject']
     template_name = 'project/add_topic_form.html'
@@ -133,12 +149,14 @@ class TopicCreateFromNoteView(LoginRequiredMixin, CreateView):
 
 # note views
 class NoteListView(ListView):
+    """Display a list of notes, supporting filtering and sorting options."""
     model = Note
     template_name = 'project/note_list.html'
     context_object_name = 'notes'
     paginate_by = 50
 
     def get_queryset(self):
+        """Return the queryset for the list of notes, applying filters from query parameters."""
         queryset = Note.objects.all()
 
         # Filters
@@ -163,6 +181,7 @@ class NoteListView(ListView):
         return queryset.order_by(sort_by)
 
     def get_context_data(self, **kwargs):
+        """Return context data, including categories, subjects, and topics for filtering options."""
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['subjects'] = Subject.objects.all()
@@ -176,10 +195,12 @@ class NoteListView(ListView):
         return context
 
 class NoteDetailView(DetailView):
+    """Display the detail page for a single note, including its comments."""
     model = Note
     template_name = 'project/note_detail.html'
 
     def get_context_data(self, **kwargs):
+        """Return context data for the note detail view, including comments and the comment form."""
         context = super().get_context_data(**kwargs)
         note = self.get_object()
         context['comments'] = Comment.objects.filter(note=note).order_by('-date')
@@ -187,50 +208,54 @@ class NoteDetailView(DetailView):
         return context
 
 class CreateNoteView(CreateView):
+    """View to create a new note. Users must be logged in to access this view."""
     model = Note
     form_class = CreateNoteForm
     template_name = 'project/create_note_form.html'
 
     def form_valid(self, form):
-        # Set the author to the logged-in user's profile
+        """Set the author of the note to the currently logged-in user."""
         form.instance.author = self.request.user.project_profile
         return super().form_valid(form)
 
     def get_success_url(self):
-        # Redirect to the detail page of the created note
+        """Redirect to the detail page of the created note after successful creation."""
         return reverse_lazy('note-detail', kwargs={'pk': self.object.pk})
 
 class NoteUpdateView(LoginRequiredMixin, UpdateView):
+    """View to update an existing note. Users can only update notes they authored."""
     model = Note
     form_class = CreateNoteForm  # Reuse your existing form
     template_name = 'project/update_note_form.html'
 
     def get_queryset(self):
-        # Restrict updates to the note's author
+        """Restrict updates to notes authored by the current user."""
         return Note.objects.filter(author=self.request.user.project_profile)
 
     def get_success_url(self):
-        # Redirect to the note detail page after update
+        """Redirect to the note detail page after successful update."""
         return reverse('note-detail', kwargs={'pk': self.object.pk})
 
 
 class NoteDeleteView(LoginRequiredMixin, DeleteView):
+    """View to delete an existing note. Only the author of the note can delete it."""
     model = Note
     template_name = 'project/note_confirm_delete.html'
     context_object_name = 'note'
 
     def get_queryset(self):
-        # Restrict deletion to the note's author
+        """Restrict deletion to notes authored by the current user."""
         return Note.objects.filter(author=self.request.user.project_profile)
 
     def get_success_url(self):
-        # Redirect to the note list after deletion
+        """Redirect to the note list after successful deletion."""
         return reverse('note-list')
 
 
 # toggle likes / bookmarks
 
 class ToggleLikeView(LoginRequiredMixin, View):
+    """View to toggle the like status of a note. Users can like or unlike a note."""
     def post(self, request, pk, *args, **kwargs):
         note = get_object_or_404(Note, pk=pk)
         profile = request.user.project_profile
@@ -243,6 +268,7 @@ class ToggleLikeView(LoginRequiredMixin, View):
         return redirect('note-detail', pk=note.pk)
     
 class ToggleBookmarkView(LoginRequiredMixin, View):
+    """View to toggle the bookmark status of a note. Users can bookmark or remove a bookmark."""
     def post(self, request, pk, *args, **kwargs):
         note = get_object_or_404(Note, pk=pk)
         profile = request.user.project_profile
@@ -339,6 +365,7 @@ class CreateProfileView(CreateView):
         return reverse('home')
 
 class ProfileDetailView(DetailView):
+    """View to display the details of a user's profile."""
     model = Profile
     template_name = 'project/profile_detail.html'
     context_object_name = 'profile'
@@ -368,6 +395,7 @@ class ProfileDetailView(DetailView):
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """View to update a user's profile."""
     model = Profile
     form_class = UpdateProfileForm
     template_name = 'project/update_profile_form.html'
@@ -383,6 +411,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 # followers / following
 
 class FollowersListView(ListView):
+    """View to look at followers"""
     model = Profile
     template_name = 'project/followers_list.html'
     context_object_name = 'followers'
@@ -393,6 +422,7 @@ class FollowersListView(ListView):
 
 
 class FollowingListView(ListView):
+    """same as before but following"""
     model = Profile
     template_name = 'project/following_list.html'
     context_object_name = 'following'
@@ -402,6 +432,7 @@ class FollowingListView(ListView):
         return profile.following.all()
 
 class FollowProfileView(LoginRequiredMixin, ListView):
+    """view to follow a profile"""
     def post(self, request, pk, *args, **kwargs):
         profile_to_follow = get_object_or_404(Profile, pk=pk)
         current_user_profile = request.user.project_profile
@@ -416,6 +447,7 @@ class FollowProfileView(LoginRequiredMixin, ListView):
 # comments
 
 class CommentCreateView(LoginRequiredMixin, View):
+    """view to make a comment"""
     def post(self, request, pk, *args, **kwargs):
         note = get_object_or_404(Note, pk=pk)
         form = CommentForm(request.POST)
@@ -432,6 +464,7 @@ class CommentCreateView(LoginRequiredMixin, View):
         })
 
 class CommentEditView(LoginRequiredMixin, UpdateView):
+    """view to edit a comment"""
     model = Comment
     form_class = CommentForm
     template_name = 'project/edit_comment_form.html'
@@ -444,6 +477,7 @@ class CommentEditView(LoginRequiredMixin, UpdateView):
         return Comment.objects.filter(user=self.request.user.project_profile)
     
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    """view to delete a comment"""
     model = Comment
     template_name = 'project/delete_comment_confirm.html'
 

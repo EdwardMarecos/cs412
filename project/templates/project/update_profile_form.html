@@ -1,14 +1,21 @@
+<!-- File: update_profile_form.html -->
+<!-- Author: Edward Marecos (emarecos@bu.edu), 12/1/2024 -->
+<!-- Description: Template for updating the user's profile. This page allows users to update their profile information, such as bio, email, and profile picture. -->
+
 {% extends 'project/base.html' %}
 
 {% block content %}
 <div class="container mt-5" style="
     max-width: 600px; 
-    padding: 30px; 
-    background-color: #f9f9f9; 
-    border-radius: 15px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+    font-family: Arial, sans-serif;">
     
-    <h2 class="text-center mb-4" style="color: #1976D2;">Update Your Profile</h2>
+    <h2 class="text-center mb-4" style="color: #333;">Update Your Profile</h2>
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -16,7 +23,8 @@
         <button type="submit" class="btn btn-primary btn-block" style="
             padding: 10px 20px;
             font-size: 16px;
-            font-weight: bold;">Update Profile</button>
+            font-weight: bold;
+            background-color: #333;">Update Profile</button>
     </form>
 </div>
 {% endblock %}

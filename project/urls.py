@@ -1,5 +1,6 @@
-## project/urls.py
-## description: url patterns for the project app
+# File: urls.py
+# Author: Edward Marecos (emarecos@bu.edu), 12/1/2024
+# Description: URL patterns for the project app. This file defines all the URL routes for the various views, including home, category, subject, topic, notes, user interactions, comments, profile, and authentication.
 
 from django.urls import path
 from django.contrib.auth import views as auth_views #django auth view

@@ -1,9 +1,9 @@
-## project/forms.py
-## description: forms for the project app
+# File: forms.py
+# Author: Edward Marecos (emarecos@bu.edu), 12/1/2024
+# Description: Contains form classes for the project app. These forms are used to create and update instances of Profile, Note, and Comment models, and provide input validation and UI customization.
 
-from django import forms
-from .models import *
-import datetime
+from django import forms  # Importing Django's form utilities
+from .models import *  # Importing all models from the local app
 
 class CreateProfileForm(forms.ModelForm):
     """
@@ -111,6 +111,7 @@ class UpdateProfileForm(forms.ModelForm):
         }
 
 class CreateNoteForm(forms.ModelForm):
+    """Form for creating a new Note object."""
     class Meta:
         model = Note
         fields = ['topic', 'title', 'content']
@@ -130,6 +131,7 @@ class CreateNoteForm(forms.ModelForm):
         }
 
 class CommentForm(forms.ModelForm):
+    """Form for creating or editing a Comment object."""
     class Meta:
         model = Comment
         fields = ['content']

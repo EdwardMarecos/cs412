@@ -1,3 +1,7 @@
+# File: models.py
+# Author: Edward Marecos (emarecos@bu.edu), 12/1/2024
+# Description: Contains all the model classes for the project app. These models define the database structure and relationships for the Profile, Category, Subject, Topic, Note, Comment, and Image models.
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
@@ -6,6 +10,7 @@ from django.utils.timezone import now
 # Create your models here.
 
 class Profile(models.Model):
+    """Model to represent a user's profile."""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='project_profile')
     followers = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
 
@@ -38,28 +43,35 @@ class Profile(models.Model):
         return f"{self.first_name} {self.last_name}'s Profile"
 
 class Category(models.Model):
+    """Model to represent a category."""
     name = models.CharField(max_length=255, unique=True)
     graphic = models.ImageField(upload_to='project/category/images/', null=True, blank=True)
     
     def __str__(self):
+        """Return a string representation of the cat."""
         return self.name
 
 class Subject(models.Model):
+    """Model to represent a subject, which is linked to a category."""
     name = models.CharField(max_length=255)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
+        """Return a string representation of the subject."""
         return f"{self.name} ({self.category.name})"
 
 class Topic(models.Model):
+    """Model to represent a topic, which is linked to a subject."""
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     parent_subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
 
     def __str__(self):
+        """Return a string representation of the topic."""
         return self.title
 
 class Note(models.Model):
+    """Model to represent a note, which is linked to a topic and an author."""
     title = models.CharField(max_length=255)
     content = models.TextField()
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
@@ -74,11 +86,13 @@ class Note(models.Model):
     bookmarked_by = models.ManyToManyField(Profile, related_name="bookmarked_notes", blank=True)
 
     def like(self, profile):
+        """Like the note, updating the like count."""
         self.liked_by.add(profile)
         self.like_count = self.liked_by.count()
         self.save()
 
     def unlike(self, profile):
+        """Unlike the note, updating the like count."""
         self.liked_by.remove(profile)
         self.like_count = self.liked_by.count()
         self.save()
@@ -99,6 +113,7 @@ class Note(models.Model):
         return f"{self.title} by {self.author.user.username} (Likes: {self.like_count}, Bookmarks: {self.bookmark_count})"
 
 class Comment(models.Model):
+    """Model to represent a comment on a note."""
     content = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
@@ -112,6 +127,7 @@ class Image(models.Model):
     in the Django media directory 
     image field, a foreign key to connect to status messages (to include zero
     to as many imagesm in a status message), timestamp'''
+    # i ended up not using it but im not about to risk something breaking so it stays here
     image = models.ImageField(upload_to='')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=now)
